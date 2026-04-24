@@ -1,0 +1,2904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BeeGreen CALC - Sistema Profesional para Nutricionistas</title>
+    <style>
+        /* ========== RESET Y ESTILOS GLOBALES ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: space-around;
+            flex-direction: column;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2A7B9B 26%, #337522 82%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* ========== TABS ========== */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #2A7B9B;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-left: 4px solid #2A7B9B;
+            padding-left: 15px;
+        }
+
+        /* ========== FORMULARIOS ========== */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2A7B9B;
+        }
+
+        button {
+            background: linear-gradient(135deg, #2A7B9B 0%, #337522 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========== GRID ========== */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        /* ========== RESULTADOS ========== */
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .result-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #2A7B9B 0%, #337522 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        /* ========== MACROS SLIDERS ========== */
+        .macro-slider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .macro-slider input {
+            flex: 1;
+        }
+
+        .macro-slider span {
+            min-width: 60px;
+            text-align: right;
+            font-weight: 600;
+            color: #2A7B9B;
+        }
+
+        .percentage-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #856404;
+        }
+
+        /* ========== DISTRIBUCIÓN DE COMIDAS ========== */
+        .meal-distribution {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .meal-distribution h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .meal-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meal-label {
+            min-width: 140px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .meal-slider {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .meal-slider input {
+            width: 100%;
+            padding: 8px;
+        }
+
+        .meal-percent {
+            min-width: 60px;
+            text-align: right;
+            font-weight: 600;
+            color: #2A7B9B;
+        }
+
+        .meal-kcal {
+            min-width: 100px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .meal-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #856404;
+        }
+
+        .distribution-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            background: #e0e0e0;
+            color: #333;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        .preset-btn:hover {
+            background: #2A7B9B;
+            color: white;
+        }
+
+        .meal-count-selector {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meal-count-selector label {
+            margin-bottom: 0;
+            display: inline-block;
+        }
+
+        .meal-count-selector select {
+            width: auto;
+            min-width: 120px;
+        }
+
+        /* ========== HIDRATACIÓN ========== */
+        .hydration-section {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #4fc3f7;
+        }
+
+        .hydration-section h3 {
+            color: #006064;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hydration-result {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .water-glass {
+            text-align: center;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            min-width: 150px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .water-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #006064;
+        }
+
+        .water-unit {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .water-tip {
+            flex: 1;
+            font-size: 0.85rem;
+            color: #004d40;
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        /* ========== LISTA DE ALIMENTOS ========== */
+        .food-list {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+
+        .food-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .food-item:hover {
+            background: #f0f0f0;
+        }
+
+        .food-item.selected {
+            background: #2A7B9B;
+            color: white;
+        }
+
+        /* ========== FILTROS AVANZADOS ========== */
+        .advanced-filters {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #cce5ff;
+        }
+
+        .filter-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2A7B9B;
+            font-size: 0.9rem;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 0.7rem;
+            margin-bottom: 2px;
+            color: #666;
+        }
+
+        .filter-group input {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .filter-actions button {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        /* ========== ITEMS DEL MENÚ ========== */
+        .menu-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .menu-item-info {
+            flex: 1;
+        }
+
+        .menu-item-name {
+            font-weight: 600;
+        }
+
+        .menu-item-nutri {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .menu-item-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .edit-quantity {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .edit-quantity input {
+            width: 70px;
+            padding: 5px;
+            text-align: center;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .edit-quantity span {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .update-btn {
+            background: #2A7B9B;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+        }
+
+        .total-summary {
+            background: linear-gradient(135deg, #2A7B9B 0%, #337522 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        /* ========== SEGUIMIENTO DE OBJETIVOS ========== */
+        .goal-tracker {
+            background: #fff8e1;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .goal-tracker h4 {
+            color: #e65100;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .goal-progress {
+            margin-bottom: 12px;
+        }
+
+        .goal-progress .label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #2A7B9B, #337522);
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .progress-fill.over {
+            background: #dc3545;
+        }
+
+        .goal-value {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 3px;
+        }
+
+        .goal-value.warning {
+            color: #dc3545;
+        }
+
+        /* ========== BADGES ========== */
+        .badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+        }
+
+        /* ========== MENÚS GUARDADOS ========== */
+        .saved-menus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .saved-menu-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .saved-menu-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .saved-menu-card.selected {
+            border-color: #2A7B9B;
+            background: #e8f4f8;
+        }
+
+        .menu-checkbox {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .selection-mode-bar {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .selection-mode-bar button {
+            margin: 0;
+        }
+
+        .selected-count {
+            background: #2A7B9B;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .daily-plan-summary {
+            background: #f0f8ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #2A7B9B;
+        }
+
+        .daily-plan-category {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .weight-recommendation {
+            background: #e8f4f8;
+            border-left: 4px solid #2A7B9B;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        /* ========== MODAL ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #2A7B9B;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        .backup-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        /* ========== AUTH STYLES ========== */
+        .auth-error {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .auth-success {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .auth-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2A7B9B;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            background-color: #1a4d2a;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px;
+            border-radius: 20px;
+        }
+
+        .footer-container {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+            margin: 10px;
+        }
+
+        .footer-section h3 {
+            border-bottom: 2px solid #555;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .footer-bottom {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        .backup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .tabs {
+                justify-content: center;
+            }
+            .meal-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .hydration-result {
+                flex-direction: column;
+            }
+            .menu-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .menu-item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            .filter-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== PANEL DE AUTENTICACIÓN ========== -->
+<div id="auth-container" style="max-width: 500px; margin: 40px auto; display: none;">
+    <div class="header" style="margin-bottom: 20px;">
+        <div class="title-area">
+            <h1>🐝 BeeGreen CALC</h1>
+            <p>Acceso Profesional</p>
+        </div>
+    </div>
+    <div class="auth-tabs" style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button class="auth-tab active" data-auth-tab="login" style="flex:1; background: white; color: #2A7B9B; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">🔐 Iniciar Sesión</button>
+        <button class="auth-tab" data-auth-tab="register" style="flex:1; background: rgba(255,255,255,0.2); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; cursor: pointer;">📝 Registrarse</button>
+    </div>
+    <div id="login-form" class="auth-form" style="background: white; border-radius: 24px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+        <h3 style="color:#2A7B9B;">Bienvenido de vuelta</h3>
+        <div id="login-error" class="auth-error"></div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="nutricionista@ejemplo.com">
+        </div>
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="login-password" placeholder="••••••••">
+        </div>
+        <button id="btn-login" style="width:100%">Ingresar al Sistema</button>
+    </div>
+    <div id="register-form" class="auth-form" style="display:none; background: white; border-radius: 24px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+        <h3 style="color:#2A7B9B;">Crear cuenta profesional</h3>
+        <div id="register-error" class="auth-error"></div>
+        <div id="register-success" class="auth-success"></div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="reg-email" placeholder="tu@email.com">
+        </div>
+        <div class="form-group">
+            <label>Contraseña (mínimo 6 caracteres)</label>
+            <input type="password" id="reg-password" placeholder="******">
+        </div>
+        <button id="btn-register" style="width:100%">Registrarse</button>
+    </div>
+</div>
+
+<!-- ========== LOADING SPINNER ========== -->
+<div id="loading-container" style="max-width: 500px; margin: 40px auto; display: block;">
+    <div class="header" style="margin-bottom: 20px;">
+        <h1>🐝 BeeGreen CALC</h1>
+        <p>Cargando...</p>
+    </div>
+    <div class="auth-loading">
+        <div class="spinner"></div>
+    </div>
+</div>
+
+    <div class="container" id="app-container" style="display: none;">
+        <!-- ========== HEADER ========== -->
+        <div class="header">
+            <h1>🐝 BeeGreen CALC</h1>
+            <p>Sistema profesional para nutricionistas - Cálculo IMC, Macros y Planificación de Menús</p>
+            <p><small>📊 Base de datos: Alimentos Venezolanos | 🇻🇪 Tabla de Composición de Alimentos</small></p>
+        </div>
+
+        <!-- ========== TABS ========== -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('imc')">📊 IMC</button>
+            <button class="tab-btn" onclick="showTab('macros')">⚡ Macros Diarios</button>
+            <button class="tab-btn" onclick="showTab('menu')">📋 Crear Menú</button>
+            <button class="tab-btn" onclick="showTab('saved')">💾 Menús Guardados</button>
+        </div>
+
+        <!-- ========== TAB IMC ========== -->
+        <div id="imc-tab" class="tab-content">
+            <div class="card">
+                <h2>📐 Cálculo del Índice de Masa Corporal (IMC)</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label>Peso (kg)</label>
+                            <input type="number" id="peso" step="0.1" placeholder="Ej: 70">
+                        </div>
+                        <div class="form-group">
+                            <label>Altura (cm)</label>
+                            <input type="number" id="altura" step="0.1" placeholder="Ej: 165">
+                        </div>
+                        <div class="form-group">
+                            <label>Edad (años)</label>
+                            <input type="number" id="edad" placeholder="Ej: 30">
+                        </div>
+                        <div class="form-group">
+                            <label>Sexo</label>
+                            <select id="sexo">
+                                <option value="mujer">Mujer</option>
+                                <option value="hombre">Hombre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nivel de Actividad</label>
+                            <select id="actividad">
+                                <option value="1.2">Sedentario</option>
+                                <option value="1.375">Ligero</option>
+                                <option value="1.55">Moderado</option>
+                                <option value="1.725">Activo</option>
+                                <option value="1.9">Muy activo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre del Paciente</label>
+                            <input type="text" id="nombre-paciente" placeholder="Ej: María González">
+                        </div>
+                        <button onclick="calcularIMC()">Calcular IMC y TMB</button>
+                    </div>
+                    <div id="imc-resultado" class="result-box">
+                        <p style="text-align: center; color: #999;">Complete los datos y presione "Calcular"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== TAB MACROS ========== -->
+        <div id="macros-tab" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>⚡ Cálculo de Macronutrientes Diarios</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label>Calorías Diarias (kcal)</label>
+                            <input type="number" id="calorias-diarias">
+                        </div>
+                        <div class="form-group">
+                            <label>Objetivo</label>
+                            <select id="objetivo" onchange="ajustarCaloriasPorObjetivo()">
+                                <option value="mantener">Mantener peso</option>
+                                <option value="definir">Definición (déficit 20%)</option>
+                                <option value="volumen">Volumen (superávit 15%)</option>
+                            </select>
+                        </div>
+                        <div style="margin: 20px 0; padding: 15px; background: #f0f0f5; border-radius: 15px;">
+                            <h3 style="margin-bottom: 15px; font-size: 1rem;">📊 Distribución de Macronutrientes</h3>
+                            <div class="macro-slider">
+                                <label>🥔 Carbo:</label>
+                                <input type="range" id="porc-carbs" min="20" max="100" value="50" step="1" oninput="actualizarPorcentajes('carbs')">
+                                <span id="carbs-valor">50%</span>
+                            </div>
+                            <div class="macro-slider">
+                                <label>🍗 Prote:</label>
+                                <input type="range" id="porc-proteinas" min="10" max="100" value="20" step="1" oninput="actualizarPorcentajes('proteinas')">
+                                <span id="proteinas-valor">20%</span>
+                            </div>
+                            <div class="macro-slider">
+                                <label>🧈 Grasas:</label>
+                                <input type="range" id="porc-grasas" min="10" max="100" value="30" step="1" oninput="actualizarPorcentajes('grasas')">
+                                <span id="grasas-valor">30%</span>
+                            </div>
+                            <div id="porcentaje-warning" class="percentage-warning" style="display: none;">⚠️ La suma debe ser 100%</div>
+                            <button onclick="resetearPorcentajes()" style="margin-top: 10px; background: #6c757d;">↺ Restablecer 50/30/20</button>
+                        </div>
+                        <button onclick="calcularMacros()">Calcular Macros</button>
+                    </div>
+                    <div id="macros-resultado" class="result-box">
+                        <p style="text-align: center; color: #999;">Ajuste los porcentajes y presione "Calcular Macros"</p>
+                    </div>
+                </div>
+
+                <!-- Sección de Hidratación -->
+                <div class="hydration-section" id="hydration-section" style="display: none;">
+                    <h3>💧 HIDRATACIÓN RECOMENDADA</h3>
+                    <div class="hydration-result">
+                        <div class="water-glass">
+                            <div class="water-amount" id="agua-recomendada">0</div>
+                            <div class="water-unit">litros por día</div>
+                            <div style="font-size: 0.7rem;">≈ <span id="agua-vasos">0</span> vasos de 250 ml</div>
+                        </div>
+                        <div class="water-tip">
+                            <strong>💡 Tips de hidratación:</strong>
+                            <ul>
+                                <li>Bebe agua incluso antes de tener sed</li>
+                                <li>Distribuye el consumo a lo largo del día</li>
+                                <li>Las frutas y verduras también aportan agua</li>
+                                <li>Aumenta el consumo si haces ejercicio</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.8rem; color: #006064; background: white; padding: 10px; border-radius: 8px;">
+                        📌 <strong>Fórmula utilizada:</strong> 35-45 ml por kg de peso corporal (según nivel de actividad)
+                    </div>
+                </div>
+
+                <!-- Distribución de Comidas -->
+                <div class="meal-distribution" id="meal-distribution" style="display: none;">
+                    <h3>🍽️ Distribución de Calorías por Comidas</h3>
+                    <div class="meal-count-selector">
+                        <label>📊 Número de comidas:</label>
+                        <select id="meal-count-select" onchange="cambiarCantidadComidas()">
+                            <option value="5" selected>5 comidas</option>
+                            <option value="3">3 comidas</option>
+                            <option value="4">4 comidas</option>
+                            <option value="6">6 comidas</option>
+                        </select>
+                        <button type="button" class="preset-btn" onclick="distribuirEquitativamente()">⚖️ Distribuir equitativamente</button>
+                    </div>
+                    <div id="meals-container"></div>
+                    <div id="meal-warning" class="meal-warning" style="display: none;">⚠️ La suma debe ser 100%</div>
+                    <div class="distribution-buttons">
+                        <button class="preset-btn" onclick="aplicarPresetComidas('equilibrado')">⚖️ Equilibrado</button>
+                        <button class="preset-btn" onclick="aplicarPresetComidas('fitness')">💪 Fitness</button>
+                        <button class="preset-btn" onclick="aplicarPresetComidas('ayuno')">⏰ Ayuno Intermitente</button>
+                        <button class="preset-btn" onclick="aplicarPresetComidas('completo')">🍽️ Comidas Completas</button>
+                    </div>
+                </div>
+
+                <!-- Macros por Comida -->
+                <div id="meal-macros-resultado" class="result-box" style="display: none; margin-top: 20px;">
+                    <h3>📊 Distribución de Macronutrientes por Comida</h3>
+                    <div id="meal-macros-content"></div>
+                    <button onclick="exportarDistribucionComidas()" style="margin-top: 15px; width: 100%;">📄 Exportar Plan a Word</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== TAB CREAR MENÚ ========== -->
+        <div id="menu-tab" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>🍽️ Creación de Menú Nutricional</h2>
+                <div class="grid-2">
+                    <!-- Columna izquierda: Búsqueda y alimentos -->
+                    <div>
+                        <div class="advanced-filters">
+                            <div class="filter-title">🔍 Búsqueda avanzada de alimentos</div>
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label>🔎 Nombre</label>
+                                    <input type="text" id="search-food" placeholder="Ej: arroz, pollo..." onkeyup="buscarAlimento()">
+                                </div>
+                                <div class="filter-group">
+                                    <label>🔥 Calorías (mín)</label>
+                                    <input type="number" id="filter-cal-min" placeholder="Min" step="10">
+                                </div>
+                                <div class="filter-group">
+                                    <label>🔥 Calorías (máx)</label>
+                                    <input type="number" id="filter-cal-max" placeholder="Max" step="10">
+                                </div>
+                            </div>
+                            <div class="filter-row">
+                                <div class="filter-group">
+                                    <label>🍗 Proteínas (mín g)</label>
+                                    <input type="number" id="filter-prot-min" placeholder="g" step="1">
+                                </div>
+                                <div class="filter-group">
+                                    <label>🧈 Grasas (mín g)</label>
+                                    <input type="number" id="filter-fat-min" placeholder="g" step="1">
+                                </div>
+                                <div class="filter-group">
+                                    <label>🥔 Carbohidratos (mín g)</label>
+                                    <input type="number" id="filter-carb-min" placeholder="g" step="1">
+                                </div>
+                                <div class="filter-actions">
+                                    <button onclick="aplicarFiltrosAvanzados()">🔍 Filtrar</button>
+                                    <button onclick="limpiarFiltros()">✖ Limpiar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="food-list" id="food-list">
+                            <div style="padding: 20px; text-align: center;">Cargando base de datos...</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad (g/ml)</label>
+                            <input type="number" id="cantidad" value="100" step="10">
+                        </div>
+                        <button onclick="agregarAlMenu()">➕ Agregar al Menú</button>
+                    </div>
+
+                    <!-- Columna derecha: Menú del día y acciones -->
+                    <div>
+                        <h3>📝 Menú del día</h3>
+                        <div id="menu-items">
+                            <p style="color: #999;">No hay alimentos agregados</p>
+                        </div>
+                        <div id="menu-total" class="total-summary" style="display: none;"></div>
+                        
+                        <!-- Seguimiento de objetivos -->
+                        <div id="goal-tracker" class="goal-tracker" style="display: none;">
+                            <h4>🎯 SEGUIMIENTO DE OBJETIVOS</h4>
+                            <div id="goal-content"></div>
+                        </div>
+
+                        <!-- Guardar menú -->
+                        <div style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label>📌 Nombre del menú</label>
+                                <input type="text" id="menu-nombre" placeholder="Ej: Desayuno fitness">
+                            </div>
+                            <div class="form-group">
+                                <label>🍽️ Categoría</label>
+                                <select id="menu-categoria" onchange="actualizarObjetivosPorCategoria()">
+                                    <option value="Desayuno">🥐 Desayuno</option>
+                                    <option value="Merienda AM">🍎 Merienda AM</option>
+                                    <option value="Almuerzo">🍲 Almuerzo</option>
+                                    <option value="Merienda PM">🍪 Merienda PM</option>
+                                    <option value="Cena">🍽️ Cena</option>
+                                    <option value="Merienda Post Cena">🌙 Merienda Post Cena</option>
+                                </select>
+                            </div>
+                            <button onclick="guardarMenu()" style="width: 100%;">💾 Guardar Menú</button>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button onclick="exportarMenu()" style="flex: 1;">📄 Exportar a Word</button>
+                            <button onclick="limpiarMenu()" style="flex: 1; background: #dc3545;">🗑️ Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== TAB MENÚS GUARDADOS ========== -->
+        <div id="saved-tab" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>💾 Biblioteca de Menús Guardados</h2>
+                <div class="selection-mode-bar">
+                    <div>
+                        <strong>📌 Modo Selección:</strong>
+                        <button id="toggleSelectionModeBtn" onclick="toggleSelectionMode()" style="margin-left: 10px;">✓ Activar Selección</button>
+                    </div>
+                    <div id="selectionInfo" style="display: none;">
+                        <span class="selected-count" id="selectedCount">0</span> seleccionados
+                        <button onclick="crearPlanDiario()" style="margin-left: 10px;">📅 Crear Plan</button>
+                        <button onclick="limpiarSeleccion()">🗑️ Limpiar</button>
+                        <button onclick="cancelarSeleccion()">✖ Cancelar</button>
+                    </div>
+                </div>
+                <div id="saved-menus-list" class="saved-menus-grid">
+                    <p style="color: #999; text-align: center;">No hay menús guardados</p>
+                </div>
+                <div id="dailyPlanPreview" class="daily-plan-summary" style="display: none;">
+                    <h3>📅 Vista Previa del Plan Diario</h3>
+                    <div id="dailyPlanContent"></div>
+                    <button onclick="exportarPlanDiario()">📄 Exportar a Word</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL DE RESPALDO ========== -->
+    <div id="backupModal" class="modal">
+        <div class="modal-content">
+            <h3>💾 Respaldo de Datos</h3>
+            <div class="backup-info">
+                <ul id="backupInfoList"></ul>
+            </div>
+            <div class="backup-buttons">
+                <button onclick="exportarBackup()">📤 Exportar</button>
+                <button onclick="importarBackup()">📥 Importar</button>
+                <button onclick="cerrarModalBackup()">❌ Cerrar</button>
+            </div>
+            <input type="file" id="backupFileInput" style="display: none;" accept=".json" onchange="procesarImportacionBackup(event)">
+        </div>
+        <!-- ========== FOOTER ========== -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Elaborado por: Lic. Pedro Rosales</h3>
+                <p>Email: rosales2710@gmail.com</p>
+                <p>Tel: +58 412-7483023</p>
+            </div>
+            <div class="footer-section">
+                <h3>🔄 Respaldo</h3>
+                <button onclick="abrirModalBackup()" style="background: #ffc107; color: #333;">💾 Respaldo de Datos</button>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 BeeGreen. Todos los derechos reservados.</div>
+    </footer>
+</div>
+
+    
+
+    <!-- ========== SCRIPT PRINCIPAL ========== -->
+    <script>
+        // ==================== CONFIGURACIÓN SUPABASE ====================
+        const SUPABASE_URL = "https://hfuvrkdkiemhjwvnicmj.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmdXZya2RraWVtaGp3dm5pY21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTM2MDUsImV4cCI6MjA5MTc2OTYwNX0.xJz4D7jut0Iz58oY_rl18CFocas-g_60Js9oFUPZToM";
+        // ===============================================================
+
+        // Crear cliente de Supabase
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Elementos DOM
+        const authContainer = document.getElementById('auth-container');
+        const appContainer = document.getElementById('app-container');
+        const loadingContainer = document.getElementById('loading-container');
+
+        // Funciones de autenticación
+        function showAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.background = 'rgba(255,255,255,0.2)';
+                btn.style.color = 'white';
+            });
+            const activeBtn = document.querySelector(`[data-auth-tab="${tab}"]`);
+            activeBtn.classList.add('active');
+            activeBtn.style.background = 'white';
+            activeBtn.style.color = '#2A7B9B';
+            
+            document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+            document.getElementById('login-error').style.display = 'none';
+            document.getElementById('register-error').style.display = 'none';
+            document.getElementById('register-success').style.display = 'none';
+        }
+
+        document.querySelectorAll('.auth-tab').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                showAuthTab(btn.getAttribute('data-auth-tab'));
+            });
+        });
+
+        // Login
+        document.getElementById('btn-login').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-login');
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.style.display = 'none';
+            
+            if (!email || !password) {
+                errorDiv.textContent = 'Completa todos los campos';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = 'Ingresando...';
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) {
+                    let errorMessage = error.message;
+                    if (error.message.includes('Invalid login credentials')) {
+                        errorMessage = 'Email o contraseña incorrectos';
+                    } else if (error.message.includes('Email not confirmed')) {
+                        errorMessage = 'Por favor confirma tu email antes de iniciar sesión';
+                    }
+                    errorDiv.textContent = errorMessage;
+                    errorDiv.style.display = 'block';
+                } else {
+                    cargarSesion(data.user);
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+                errorDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Ingresar al Sistema';
+            }
+        });
+
+        // Permitir login con Enter
+        document.getElementById('login-password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btn-login').click();
+            }
+        });
+
+        // Registro
+        document.getElementById('btn-register').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-register');
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const errorDiv = document.getElementById('register-error');
+            const successDiv = document.getElementById('register-success');
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            if (!email || !password || password.length < 6) {
+                errorDiv.textContent = 'Email válido y contraseña de al menos 6 caracteres.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = 'Registrando...';
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({ 
+                    email, 
+                    password,
+                    options: {
+                        emailRedirectTo: window.location.origin
+                    }
+                });
+                
+                if (error) {
+                    let errorMessage = error.message;
+                    if (error.message.includes('already registered')) {
+                        errorMessage = 'Este email ya está registrado';
+                    }
+                    errorDiv.textContent = errorMessage;
+                    errorDiv.style.display = 'block';
+                } else {
+                    if (data.user && !data.session) {
+                        // El email necesita confirmación
+                        successDiv.textContent = 'Registro exitoso. Revisa tu email para confirmar tu cuenta.';
+                    } else {
+                        successDiv.textContent = 'Registro exitoso. ¡Ya puedes iniciar sesión!';
+                    }
+                    successDiv.style.display = 'block';
+                    document.getElementById('reg-email').value = '';
+                    document.getElementById('reg-password').value = '';
+                    setTimeout(() => showAuthTab('login'), 3000);
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+                errorDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Registrarse';
+            }
+        });
+
+        // Permitir registro con Enter
+        document.getElementById('reg-password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btn-register').click();
+            }
+        });
+
+        function cargarSesion(user) {
+            loadingContainer.style.display = 'none';
+            authContainer.style.display = 'none';
+            appContainer.style.display = 'block';
+            
+            // Agregar barra de usuario en el header
+            const header = document.querySelector('#app-container .header');
+            if (header && !document.getElementById('user-welcome')) {
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.id = 'user-welcome';
+                welcomeDiv.style.display = 'flex';
+                welcomeDiv.style.justifyContent = 'center';
+                welcomeDiv.style.alignItems = 'center';
+                welcomeDiv.style.gap = '15px';
+                welcomeDiv.style.marginTop = '15px';
+                welcomeDiv.innerHTML = `
+                    <div style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:50px; font-size:0.9rem;">👤 ${user.email}</div>
+                    <button id="logout-button" style="background:rgba(220,53,69,0.9); border:none; padding:8px 16px; border-radius:30px; color:white; cursor:pointer; font-weight: 600;">🚪 Cerrar Sesión</button>
+                `;
+                header.appendChild(welcomeDiv);
+                document.getElementById('logout-button').addEventListener('click', async () => {
+                    const btn = document.getElementById('logout-button');
+                    btn.disabled = true;
+                    btn.textContent = 'Cerrando...';
+                    await supabaseClient.auth.signOut();
+                    location.reload();
+                });
+            }
+            
+            // Inicializar la aplicación
+            cargarMenusGuardados();
+            cargarListaAlimentos();
+            generarInterfazComidas();
+        }
+
+        async function verificarSesionActual() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session?.user) {
+                    cargarSesion(session.user);
+                } else {
+                    loadingContainer.style.display = 'none';
+                    authContainer.style.display = 'block';
+                    appContainer.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error verificando sesión:', error);
+                loadingContainer.style.display = 'none';
+                authContainer.style.display = 'block';
+                appContainer.style.display = 'none';
+            }
+        }
+
+        // Escuchar cambios en la autenticación
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            console.log('Auth state changed:', event);
+            if (event === 'SIGNED_IN' && session?.user) {
+                cargarSesion(session.user);
+            }
+            if (event === 'SIGNED_OUT') {
+                authContainer.style.display = 'block';
+                appContainer.style.display = 'none';
+                loadingContainer.style.display = 'none';
+                // Remover el welcome div si existe
+                const welcomeDiv = document.getElementById('user-welcome');
+                if (welcomeDiv) welcomeDiv.remove();
+            }
+        });
+
+        // Iniciar verificación al cargar la página
+        verificarSesionActual();
+
+        // --------------------------------------------------------------
+        // 1. BASE DE DATOS DE ALIMENTOS (Venezuela)
+        // --------------------------------------------------------------
+        const alimentosDB = [
+            {codigo:1,nombre:"Arroz Blanco Cocido (sancochado)",calorias:106,proteinas:2.2,grasas:0.1,carbohidratos:24.4},
+            {codigo:2,nombre:"Arroz Blanco, variedad Araure",calorias:353,proteinas:8.6,grasas:0.6,carbohidratos:79.2},
+            {codigo:3,nombre:"Arroz Blanco, variedad Cimarron",calorias:355,proteinas:6.1,grasas:0.9,carbohidratos:81.7},
+            {codigo:4,nombre:"Arroz Blanco, variedad Oryzica",calorias:353,proteinas:9.2,grasas:0.6,carbohidratos:78.9},
+            {codigo:5,nombre:"Harina de Arroz",calorias:366,proteinas:7.6,grasas:0.7,carbohidratos:82.9},
+            {codigo:6,nombre:"Harina enriquecida de Arroz",calorias:370,proteinas:8.5,grasas:0.7,carbohidratos:83},
+            {codigo:7,nombre:"Arroz Integral",calorias:354,proteinas:8.5,grasas:1.5,carbohidratos:80.3},
+            {codigo:8,nombre:"Arroz Integral cocido (sancochado)",calorias:96,proteinas:2.4,grasas:0.3,carbohidratos:22.6},
+            {codigo:9,nombre:"Arroz Integral, variedad Araure",calorias:351,proteinas:8.9,grasas:2.9,carbohidratos:75.3},
+            {codigo:10,nombre:"Arroz Integral, Variedad Cimarron",calorias:352,proteinas:6.8,grasas:2.7,carbohidratos:78.1},
+            {codigo:11,nombre:"Arroz Integral, variedad Oryzica",calorias:350,proteinas:9.6,grasas:3.3,carbohidratos:74},
+            {codigo:12,nombre:"Harina de Avena",calorias:384,proteinas:14.7,grasas:8.6,carbohidratos:66.1},
+            {codigo:13,nombre:"Hojuelas de Avena",calorias:348,proteinas:9.6,grasas:7.3,carbohidratos:71.2},
+            {codigo:14,nombre:"Hojuelas saborizadas de Avena",calorias:395,proteinas:5.4,grasas:5.8,carbohidratos:80.3},
+            {codigo:15,nombre:"Cebada Grano entero",calorias:317,proteinas:11.3,grasas:1.8,carbohidratos:74},
+            {codigo:16,nombre:"Harina enriquecida de Cebada",calorias:356,proteinas:8.3,grasas:2.2,carbohidratos:80.4},
+            {codigo:17,nombre:"Cebada Perlada",calorias:323,proteinas:9,grasas:1,carbohidratos:78},
+            {codigo:18,nombre:"Arepa de (1), enriquecida Maiz A.",calorias:184,proteinas:4.2,grasas:0.7,carbohidratos:44.1},
+            {codigo:19,nombre:"Maiz Grano Entero",calorias:284,proteinas:8.5,grasas:4,carbohidratos:72.4},
+            {codigo:20,nombre:"Harina de grano completo (funche) M.A.",calorias:286,proteinas:7.3,grasas:3.5,carbohidratos:78.2},
+            {codigo:21,nombre:"Harina precocida de Maiz A.",calorias:355,proteinas:7.2,grasas:1.2,carbohidratos:82},
+            {codigo:22,nombre:"Harina precocida enriquecida de M.A.",calorias:355,proteinas:7.2,grasas:1.2,carbohidratos:82},
+            {codigo:23,nombre:"Hojuelas azucaradas enriquecidas de Maiz A.",calorias:363,proteinas:3.7,grasas:0.1,carbohidratos:90},
+            {codigo:24,nombre:"Hojuelas enriquecidas de Maiz A.",calorias:350,proteinas:6.7,grasas:0.4,carbohidratos:83.3},
+            {codigo:25,nombre:"Maiz A. Inflado azucarado enriquecido",calorias:369,proteinas:5.5,grasas:0,carbohidratos:90},
+            {codigo:26,nombre:"Maiz A. tierno enlatado, estilo crema",calorias:77,proteinas:1.5,grasas:0.2,carbohidratos:18.2},
+            {codigo:27,nombre:"Maiz A. enlatado, grano entero",calorias:85,proteinas:2.5,grasas:0.3,carbohidratos:19.9},
+            {codigo:28,nombre:"Arepa de(1)enriquecida maiz blanco",calorias:168,proteinas:3.8,grasas:0.6,carbohidratos:40.5},
+            {codigo:29,nombre:"Arepa de(1)grano pelado con cal M.B",calorias:196,proteinas:5.7,grasas:2.5,carbohidratos:38.5},
+            {codigo:30,nombre:"Maiz blanco grano entero",calorias:286,proteinas:9,grasas:4.3,carbohidratos:71.6},
+            {codigo:31,nombre:"Harina integral precocida de Maiz B.",calorias:354,proteinas:7.1,grasas:3.8,carbohidratos:78.4},
+            {codigo:32,nombre:"Harina precocida de maiz blanco",calorias:354,proteinas:7.2,grasas:1.1,carbohidratos:80.2},
+            {codigo:33,nombre:"Harina precocida enriquecida de M.A.",calorias:354,proteinas:7.2,grasas:1.1,carbohidratos:80.2},
+            {codigo:34,nombre:"Hallaquita de (16) maiz blanco",calorias:130,proteinas:2.6,grasas:0.3,carbohidratos:29.3},
+            {codigo:35,nombre:"Maiz blanco pilado",calorias:339,proteinas:7.8,grasas:1.5,carbohidratos:78.1},
+            {codigo:36,nombre:"Maiz cariaca, harina de maiz blanco",calorias:360,proteinas:9.5,grasas:4.1,carbohidratos:73.7},
+            {codigo:37,nombre:"Maiz tostado, harina de maiz blanco",calorias:364,proteinas:9.9,grasas:4.6,carbohidratos:73.3},
+            {codigo:38,nombre:"Maicena enriquecida (almidon de maiz)",calorias:345,proteinas:0.6,grasas:0.2,carbohidratos:85.6},
+            {codigo:39,nombre:"maiz tierno (jojoto)",calorias:98,proteinas:3.4,grasas:1,carbohidratos:20.7},
+            {codigo:40,nombre:"Galletas de soda",calorias:415,proteinas:8.6,grasas:10.2,carbohidratos:72.4},
+            {codigo:41,nombre:"Dulce (tipo Maria) galletas",calorias:420,proteinas:7.7,grasas:9.2,carbohidratos:77.1},
+            {codigo:42,nombre:"Integrales dulces (Honey Bran)",calorias:392,proteinas:8,grasas:13.5,carbohidratos:73.2},
+            {codigo:43,nombre:"Integrales saladas (Kracker Bran)",calorias:412,proteinas:9.7,grasas:12.6,carbohidratos:71.4},
+            {codigo:44,nombre:"Saltines galletas",calorias:415,proteinas:10.3,grasas:9.4,carbohidratos:72.8},
+            {codigo:45,nombre:"Galletas simples surtidas",calorias:438,proteinas:6,grasas:12.7,carbohidratos:75},
+            {codigo:46,nombre:"Pan blanco tipo sandwich",calorias:263,proteinas:9.4,grasas:3,carbohidratos:52.2},
+            {codigo:47,nombre:"Pan canilla",calorias:295,proteinas:11.4,grasas:2.3,carbohidratos:60.2},
+            {codigo:48,nombre:"Pan de centeno",calorias:257,proteinas:9.2,grasas:0.7,carbohidratos:54.6},
+            {codigo:49,nombre:"Pan de gluten",calorias:299,proteinas:17.3,grasas:1.8,carbohidratos:54},
+            {codigo:50,nombre:"Pan de trigo integral",calorias:241,proteinas:9,grasas:2.6,carbohidratos:51.6},
+            {codigo:76,nombre:"Gallina, carne de",calorias:240,proteinas:18.5,grasas:18.4,carbohidratos:0},
+            {codigo:77,nombre:"Paloma, carne de",calorias:273,proteinas:18.6,grasas:22.1,carbohidratos:0},
+            {codigo:78,nombre:"Pato, carne de",calorias:321,proteinas:16,grasas:28.6,carbohidratos:0},
+            {codigo:79,nombre:"Pavo, carne de",calorias:261,proteinas:20,grasas:20.1,carbohidratos:0},
+            {codigo:80,nombre:"Pavo, pechuga de, estandar (charcuteria)",calorias:76,proteinas:15.2,grasas:0.7,carbohidratos:2.2},
+            {codigo:81,nombre:"Pavo, pechuga de, superior (charcuteria)",calorias:103,proteinas:22.6,grasas:1.3,carbohidratos:0.1},
+            {codigo:82,nombre:"Pollo, alas de, con piel",calorias:217,proteinas:18.3,grasas:16,carbohidratos:0},
+            {codigo:83,nombre:"Pollo, alas de, sin piel",calorias:120,proteinas:22,grasas:3.5,carbohidratos:0},
+            {codigo:84,nombre:"Pollo, bologna de",calorias:254,proteinas:13.2,grasas:18.3,carbohidratos:9.1},
+            {codigo:85,nombre:"Pollo, carne de",calorias:183,proteinas:20.2,grasas:11.4,carbohidratos:0},
+            {codigo:95,nombre:"Pollo, pechuga de, cocida",calorias:143,proteinas:28.6,grasas:3.2,carbohidratos:0},
+            {codigo:99,nombre:"Pollo, pechuga de, sin piel",calorias:103,proteinas:23.1,grasas:1.2,carbohidratos:0},
+            {codigo:155,nombre:"Carne molida (res)",calorias:201,proteinas:18.2,grasas:14.2,carbohidratos:0},
+            {codigo:156,nombre:"Chocozuela (res)",calorias:100,proteinas:22.3,grasas:1.2,carbohidratos:0},
+            {codigo:166,nombre:"Solomo (res)",calorias:98,proteinas:23.2,grasas:0.6,carbohidratos:0},
+            {codigo:185,nombre:"Atun",calorias:111,proteinas:26.1,grasas:0.7,carbohidratos:0},
+            {codigo:186,nombre:"Atun natural enlatado, escurrido",calorias:96,proteinas:23.2,grasas:0.4,carbohidratos:0},
+            {codigo:233,nombre:"Sardinas",calorias:145,proteinas:20.6,grasas:7,carbohidratos:0},
+            {codigo:245,nombre:"Camarones",calorias:91,proteinas:19.7,grasas:1.3,carbohidratos:0},
+            {codigo:256,nombre:"Gallina, huevo entero",calorias:156,proteinas:12.4,grasas:11.1,carbohidratos:1.5},
+            {codigo:257,nombre:"Gallina, clara de huevo",calorias:46,proteinas:10.8,grasas:0.2,carbohidratos:0.6},
+            {codigo:258,nombre:"Gallina, yema de huevo",calorias:354,proteinas:16.1,grasas:31.6,carbohidratos:1.2},
+            {codigo:267,nombre:"Leche liquida completa",calorias:63,proteinas:3.5,grasas:3.4,carbohidratos:4.7},
+            {codigo:268,nombre:"Leche liquida descremada",calorias:43,proteinas:3.6,grasas:0.9,carbohidratos:5},
+            {codigo:275,nombre:"Mantequilla",calorias:731,proteinas:0.6,grasas:81,carbohidratos:0},
+            {codigo:286,nombre:"Queso blanco suave",calorias:313,proteinas:18.3,grasas:26.3,carbohidratos:0.8},
+            {codigo:295,nombre:"Queso mozzarela",calorias:230,proteinas:19.9,grasas:16.1,carbohidratos:1.3},
+            {codigo:305,nombre:"Yoghurt natural de leche completa",calorias:74,proteinas:4.3,grasas:3.8,carbohidratos:5.7},
+            {codigo:314,nombre:"Caraotas negras",calorias:248,proteinas:23,grasas:1.6,carbohidratos:59.3},
+            {codigo:315,nombre:"Caraotas negras cocidas",calorias:82,proteinas:8.5,grasas:0.3,carbohidratos:21},
+            {codigo:324,nombre:"Garbanzos",calorias:310,proteinas:20,grasas:4.6,carbohidratos:60},
+            {codigo:330,nombre:"Lentejas",calorias:252,proteinas:23.9,grasas:0.9,carbohidratos:59.7},
+            {codigo:331,nombre:"Lentejas cocidas",calorias:65,proteinas:6.8,grasas:0.3,carbohidratos:13.2},
+            {codigo:349,nombre:"Papa",calorias:81,proteinas:2,grasas:0.1,carbohidratos:19.5},
+            {codigo:350,nombre:"Papa cocida",calorias:68,proteinas:2,grasas:0.1,carbohidratos:16.1},
+            {codigo:352,nombre:"Yuca",calorias:143,proteinas:1.1,grasas:0.2,carbohidratos:36.5},
+            {codigo:353,nombre:"Yuca cocida",calorias:129,proteinas:0.8,grasas:0.2,carbohidratos:33.3},
+            {codigo:355,nombre:"Aguacate",calorias:152,proteinas:1.3,grasas:14,carbohidratos:8},
+            {codigo:359,nombre:"Ajo",calorias:129,proteinas:5.1,grasas:0.2,carbohidratos:27.8},
+            {codigo:363,nombre:"Auyama",calorias:43,proteinas:1.5,grasas:0.4,carbohidratos:9.7},
+            {codigo:367,nombre:"Brocoli",calorias:27,proteinas:3.8,grasas:0.4,carbohidratos:6.5},
+            {codigo:369,nombre:"Cebolla",calorias:43,proteinas:1.4,grasas:0.2,carbohidratos:11.1},
+            {codigo:376,nombre:"Espinaca",calorias:17,proteinas:2.3,grasas:0.3,carbohidratos:3.8},
+            {codigo:380,nombre:"Lechuga",calorias:10,proteinas:1.2,grasas:0.2,carbohidratos:3.5},
+            {codigo:396,nombre:"Tomate manzano",calorias:15,proteinas:1.4,grasas:0.2,carbohidratos:3.2},
+            {codigo:401,nombre:"Zanahoria",calorias:32,proteinas:1,grasas:0.2,carbohidratos:8.7},
+            {codigo:410,nombre:"Cambur cuyaco",calorias:92,proteinas:1.9,grasas:0.7,carbohidratos:19.8},
+            {codigo:429,nombre:"Fresa",calorias:39,proteinas:0.8,grasas:0.5,carbohidratos:9.7},
+            {codigo:442,nombre:"Lechoza",calorias:31,proteinas:0.6,grasas:0.1,carbohidratos:8.4},
+            {codigo:447,nombre:"Mandarina",calorias:50,proteinas:0.8,grasas:0.3,carbohidratos:11.9},
+            {codigo:449,nombre:"Mango bocado",calorias:62,proteinas:0.6,grasas:0.1,carbohidratos:16.6},
+            {codigo:453,nombre:"Manzana importada",calorias:55,proteinas:0.3,grasas:0.3,carbohidratos:14.7},
+            {codigo:465,nombre:"Naranja valencia",calorias:35,proteinas:0.7,grasas:0,carbohidratos:8.8},
+            {codigo:471,nombre:"Patilla",calorias:21,proteinas:0.5,grasas:0,carbohidratos:5.1},
+            {codigo:475,nombre:"Pina",calorias:55,proteinas:0.4,grasas:0.2,carbohidratos:14.1},
+            {codigo:477,nombre:"Platano maduro",calorias:137,proteinas:1.2,grasas:0.4,carbohidratos:34},
+            {codigo:481,nombre:"Platano verde",calorias:148,proteinas:1.4,grasas:0.3,carbohidratos:37.1},
+            {codigo:494,nombre:"Uva",calorias:68,proteinas:0.7,grasas:0.3,carbohidratos:17.2},
+            {codigo:530,nombre:"Papas fritas",calorias:318,proteinas:4.5,grasas:11.3,carbohidratos:53.1},
+            {codigo:537,nombre:"Aceite",calorias:900,proteinas:0,grasas:100,carbohidratos:0},
+            {codigo:538,nombre:"Azucar blanca",calorias:398,proteinas:0,grasas:0,carbohidratos:99.5},
+            {codigo:564,nombre:"Miel de abeja",calorias:319,proteinas:0.3,grasas:0,carbohidratos:79.5},
+            {codigo:605,nombre:"Almendra",calorias:579,proteinas:18.6,grasas:54.1,carbohidratos:19.6},
+            {codigo:608,nombre:"Mani tostado, sin pelicula",calorias:558,proteinas:28.8,grasas:45.4,carbohidratos:19.6},
+            {codigo:625,nombre:"Semilla de Chia",calorias:486,proteinas:16.5,grasas:0.2,carbohidratos:70.9},
+            {codigo:627,nombre:"Yogurt griego",calorias:139,proteinas:6.4,grasas:10.20,carbohidratos:5.39},
+            {codigo:637,nombre:"mantequilla de mani",calorias:630,proteinas:25,grasas:50,carbohidratos:20},
+            {codigo:638,nombre:"quinoa",calorias:368,proteinas:14.12,grasas:7,carbohidratos:64.2},
+            {codigo:642,nombre:"aceite de oliva",calorias:892,proteinas:0,grasas:100,carbohidratos:0},
+            {codigo:643,nombre:"cilantro",calorias:23,proteinas:2.1,grasas:0.52,carbohidratos:3.7}
+        ];
+
+        // --------------------------------------------------------------
+        // 2. VARIABLES GLOBALES
+        // --------------------------------------------------------------
+        let menuActual = [];
+        let alimentoSeleccionado = null;
+        let caloriasBase = null;
+        let menusGuardados = [];
+        let macrosDiarios = { calorias: 0, carbs: 0, proteinas: 0, grasas: 0 };
+        let pesoActual = null;
+        let datosPaciente = { nombre: "", edad: 0, sexo: "" };
+        let selectionMode = false;
+        let selectedMenus = new Set();
+        let macroExclusions = {};
+        let currentDailyPlan = null;
+
+        // Configuración de comidas
+        const comidasDisponibles = [
+            { id: 'desayuno', nombre: '🌅 Desayuno', porcentaje: 25 },
+            { id: 'merienda-am', nombre: '🍎 Merienda AM', porcentaje: 10 },
+            { id: 'almuerzo', nombre: '🍲 Almuerzo', porcentaje: 30 },
+            { id: 'merienda-pm', nombre: '🍪 Merienda PM', porcentaje: 10 },
+            { id: 'cena', nombre: '🌙 Cena', porcentaje: 20 },
+            { id: 'merienda-post-cena', nombre: '🌙 Merienda Post Cena', porcentaje: 5 }
+        ];
+        let comidasActivas = comidasDisponibles.slice(0, 5);
+
+        // --------------------------------------------------------------
+        // 3. FUNCIONES DE ALMACENAMIENTO LOCAL
+        // --------------------------------------------------------------
+        function cargarMenusGuardados() {
+            const guardados = localStorage.getItem('nutrisoft_menus');
+            menusGuardados = guardados ? JSON.parse(guardados) : [];
+        }
+
+        function guardarMenusEnStorage() {
+            localStorage.setItem('nutrisoft_menus', JSON.stringify(menusGuardados));
+        }
+
+        // --------------------------------------------------------------
+        // 4. FUNCIONES DE NAVEGACIÓN (TABS)
+        // --------------------------------------------------------------
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).style.display = 'block';
+            event.target.classList.add('active');
+            
+            if (tab === 'menu') {
+                cargarListaAlimentos();
+                actualizarObjetivosPorCategoria();
+            }
+            if (tab === 'saved') {
+                actualizarListaMenus();
+            }
+        }
+
+        // --------------------------------------------------------------
+        // 5. CÁLCULO IMC Y TMB
+        // --------------------------------------------------------------
+        function calcularIMC() {
+            const peso = parseFloat(document.getElementById('peso').value);
+            const alturaCm = parseFloat(document.getElementById('altura').value);
+            const edad = parseInt(document.getElementById('edad').value);
+            const sexo = document.getElementById('sexo').value;
+            const actividad = parseFloat(document.getElementById('actividad').value);
+            const nombrePaciente = document.getElementById('nombre-paciente').value;
+            
+            if (!peso || !alturaCm || !edad) {
+                alert('Complete todos los campos');
+                return;
+            }
+            
+            pesoActual = peso;
+            datosPaciente = {
+                nombre: nombrePaciente || "Paciente",
+                edad: edad,
+                sexo: sexo
+            };
+            
+            const alturaM = alturaCm / 100;
+            const imc = peso / (alturaM * alturaM);
+            
+            let categoria = '';
+            let colorCategoria = '';
+            if (imc < 18.5) {
+                categoria = 'Bajo peso';
+                colorCategoria = '#ffc107';
+            } else if (imc < 25) {
+                categoria = 'Peso normal';
+                colorCategoria = '#28a745';
+            } else if (imc < 30) {
+                categoria = 'Sobrepeso';
+                colorCategoria = '#fd7e14';
+            } else {
+                categoria = 'Obesidad';
+                colorCategoria = '#dc3545';
+            }
+            
+            let tmb;
+            if (sexo === 'hombre') {
+                tmb = 88.362 + (13.397 * peso) + (4.799 * alturaCm) - (5.677 * edad);
+            } else {
+                tmb = 447.593 + (9.247 * peso) + (3.098 * alturaCm) - (4.330 * edad);
+            }
+            
+            const gastoCalorico = tmb * actividad;
+            caloriasBase = gastoCalorico;
+            document.getElementById('calorias-diarias').value = Math.round(gastoCalorico);
+            
+            const pesoMinimoRecomendado = (18.5 * alturaM * alturaM).toFixed(1);
+            const pesoMaximoRecomendado = (24.9 * alturaM * alturaM).toFixed(1);
+            const pesoIdeal = (21.7 * alturaM * alturaM).toFixed(1);
+            
+            let mensajePeso = '';
+            if (peso < pesoMinimoRecomendado) {
+                let diferenciaPeso = (pesoMinimoRecomendado - peso).toFixed(1);
+                mensajePeso = `📈 Debes aumentar aproximadamente ${diferenciaPeso} kg para alcanzar un peso saludable.`;
+            } else if (peso > pesoMaximoRecomendado) {
+                let diferenciaPeso = (peso - pesoMaximoRecomendado).toFixed(1);
+                mensajePeso = `📉 Debes reducir aproximadamente ${diferenciaPeso} kg para alcanzar un peso saludable.`;
+            } else {
+                mensajePeso = `✅ ¡Felicidades! Tu peso está dentro del rango saludable.`;
+            }
+            
+            document.getElementById('imc-resultado').innerHTML = `
+                <div class="highlight" style="background: linear-gradient(135deg, ${colorCategoria}, #337522);">
+                    <h3>IMC: ${imc.toFixed(1)}</h3>
+                    <p>Categoría: ${categoria}</p>
+                </div>
+                <div class="weight-recommendation">
+                    <h4>⚖️ PESO RECOMENDADO</h4>
+                    <div class="result-item">
+                        <span class="result-label">Peso mínimo saludable:</span>
+                        <span class="result-value"><strong>${pesoMinimoRecomendado} kg</strong></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Peso máximo saludable:</span>
+                        <span class="result-value"><strong>${pesoMaximoRecomendado} kg</strong></span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Peso ideal (referencia):</span>
+                        <span class="result-value"><strong>${pesoIdeal} kg</strong></span>
+                    </div>
+                    <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #e0e0e0; font-size: 0.9rem;">
+                        ${mensajePeso}
+                    </div>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Tasa Metabólica Basal (TMB):</span>
+                    <span class="result-value">${Math.round(tmb)} kcal/día</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Gasto Calórico Diario (GET):</span>
+                    <span class="result-value">${Math.round(gastoCalorico)} kcal/día</span>
+                </div>
+            `;
+            
+            if (pesoActual) actualizarRecomendacionAgua();
+        }
+
+        // --------------------------------------------------------------
+        // 6. CÁLCULO DE AGUA RECOMENDADA
+        // --------------------------------------------------------------
+        function calcularAguaRecomendada(peso, nivelActividad) {
+            let factor = 35;
+            if (nivelActividad === 1.2) factor = 35;
+            else if (nivelActividad === 1.375) factor = 37;
+            else if (nivelActividad === 1.55) factor = 40;
+            else if (nivelActividad === 1.725) factor = 43;
+            else if (nivelActividad === 1.9) factor = 45;
+            
+            let aguaMl = peso * factor;
+            let aguaLitros = (aguaMl / 1000).toFixed(1);
+            let vasos = Math.round(aguaMl / 250);
+            
+            return { litros: aguaLitros, ml: Math.round(aguaMl), vasos: vasos, factor: factor };
+        }
+        
+        function actualizarRecomendacionAgua() {
+            if (!pesoActual) return;
+            const actividad = parseFloat(document.getElementById('actividad').value);
+            const agua = calcularAguaRecomendada(pesoActual, actividad);
+            document.getElementById('agua-recomendada').innerHTML = agua.litros;
+            document.getElementById('agua-vasos').innerHTML = agua.vasos;
+            document.getElementById('hydration-section').style.display = 'block';
+        }
+
+        // --------------------------------------------------------------
+        // 7. CÁLCULO DE MACROS (PORCENTAJES)
+        // --------------------------------------------------------------
+        function actualizarPorcentajes(tipo) {
+            let carbs = parseInt(document.getElementById('porc-carbs').value);
+            let proteinas = parseInt(document.getElementById('porc-proteinas').value);
+            let grasas = parseInt(document.getElementById('porc-grasas').value);
+            
+            if (tipo === 'carbs') {
+                let restante = 100 - carbs;
+                proteinas = Math.min(proteinas, restante);
+                grasas = restante - proteinas;
+                if (grasas < 0) {
+                    proteinas = restante;
+                    grasas = 0;
+                }
+                document.getElementById('porc-proteinas').value = proteinas;
+                document.getElementById('porc-grasas').value = grasas;
+            } else if (tipo === 'proteinas') {
+                let restante = 100 - proteinas;
+                carbs = Math.min(carbs, restante);
+                grasas = restante - carbs;
+                if (grasas < 0) {
+                    carbs = restante;
+                    grasas = 0;
+                }
+                document.getElementById('porc-carbs').value = carbs;
+                document.getElementById('porc-grasas').value = grasas;
+            } else {
+                let restante = 100 - grasas;
+                carbs = Math.min(carbs, restante);
+                proteinas = restante - carbs;
+                if (proteinas < 0) {
+                    carbs = restante;
+                    proteinas = 0;
+                }
+                document.getElementById('porc-carbs').value = carbs;
+                document.getElementById('porc-proteinas').value = proteinas;
+            }
+            
+            document.getElementById('carbs-valor').innerText = document.getElementById('porc-carbs').value + '%';
+            document.getElementById('proteinas-valor').innerText = document.getElementById('porc-proteinas').value + '%';
+            document.getElementById('grasas-valor').innerText = document.getElementById('porc-grasas').value + '%';
+            
+            let suma = parseInt(document.getElementById('porc-carbs').value) +
+                       parseInt(document.getElementById('porc-proteinas').value) +
+                       parseInt(document.getElementById('porc-grasas').value);
+            document.getElementById('porcentaje-warning').style.display = suma === 100 ? 'none' : 'block';
+        }
+        
+        function resetearPorcentajes() {
+            document.getElementById('porc-carbs').value = 50;
+            document.getElementById('porc-proteinas').value = 20;
+            document.getElementById('porc-grasas').value = 30;
+            actualizarPorcentajes('carbs');
+            actualizarPorcentajes('proteinas');
+            actualizarPorcentajes('grasas');
+        }
+        
+        function ajustarCaloriasPorObjetivo() {
+            if (caloriasBase) {
+                let objetivo = document.getElementById('objetivo').value;
+                let calorias = caloriasBase;
+                if (objetivo === 'definir') calorias *= 0.8;
+                if (objetivo === 'volumen') calorias *= 1.15;
+                document.getElementById('calorias-diarias').value = Math.round(calorias);
+                if (document.getElementById('meal-distribution').style.display !== 'none') {
+                    actualizarDistribucionComidas();
+                }
+            }
+        }
+        
+        function calcularMacros() {
+            let calorias = parseFloat(document.getElementById('calorias-diarias').value);
+            if (!calorias) return alert('Ingrese calorías diarias');
+            
+            let pc = parseInt(document.getElementById('porc-carbs').value);
+            let pp = parseInt(document.getElementById('porc-proteinas').value);
+            let pg = parseInt(document.getElementById('porc-grasas').value);
+            
+            if (pc + pp + pg !== 100) return alert('La suma de porcentajes debe ser 100%');
+            
+            let carbGram = calorias * (pc / 100) / 4;
+            let protGram = calorias * (pp / 100) / 4;
+            let grasGram = calorias * (pg / 100) / 9;
+            
+            macrosDiarios = {
+                calorias: calorias,
+                carbs: carbGram,
+                proteinas: protGram,
+                grasas: grasGram,
+                pCarbs: pc,
+                pProt: pp,
+                pGras: pg    
+            };
+            macroExclusions = {};  
+            
+            document.getElementById('macros-resultado').innerHTML = `
+                <div class="highlight">
+                    <h3>Total: ${Math.round(calorias)} kcal</h3>
+                </div>
+                <div class="result-item">
+                    <span>🥔 Carbohidratos:</span>
+                    <span>${Math.round(carbGram)}g</span>
+                </div>
+                <div class="result-item">
+                    <span>🍗 Proteínas:</span>
+                    <span>${Math.round(protGram)}g</span>
+                </div>
+                <div class="result-item">
+                    <span>🧈 Grasas:</span>
+                    <span>${Math.round(grasGram)}g</span>
+                </div>
+            `;
+            
+            document.getElementById('meal-distribution').style.display = 'block';
+            actualizarDistribucionComidas();
+            if (pesoActual) actualizarRecomendacionAgua();
+            actualizarObjetivosPorCategoria();
+        }
+
+        // --------------------------------------------------------------
+        // 8. DISTRIBUCIÓN DE COMIDAS
+        // --------------------------------------------------------------
+        function cambiarCantidadComidas() {
+            const cantidad = parseInt(document.getElementById('meal-count-select').value);
+            comidasActivas = comidasDisponibles.slice(0, cantidad);
+            macroExclusions = {};
+            const base = Math.floor(100 / cantidad);
+            const resto = 100 - (base * cantidad);
+            comidasActivas.forEach((comida, i) => comida.porcentaje = base + (i === 0 ? resto : 0));
+            generarInterfazComidas();
+            actualizarDistribucionComidas();
+        }
+        
+        function distribuirEquitativamente() {
+            const base = Math.floor(100 / comidasActivas.length);
+            const resto = 100 - (base * comidasActivas.length);
+            comidasActivas.forEach((comida, i) => comida.porcentaje = base + (i === 0 ? resto : 0));
+            generarInterfazComidas();
+            actualizarDistribucionComidas();
+        }
+        
+        function generarInterfazComidas() {
+            let html = '';
+            comidasActivas.forEach(comida => {
+                html += `
+                    <div class="meal-row">
+                        <span class="meal-label">${comida.nombre}</span>
+                        <div class="meal-slider">
+                            <input type="range" id="meal-${comida.id}" min="0" max="100" value="${comida.porcentaje}" step="1" oninput="actualizarPorcentajeComida('${comida.id}', this.value)">
+                        </div>
+                        <span class="meal-percent" id="${comida.id}-percent">${comida.porcentaje}%</span>
+                        <span class="meal-kcal" id="${comida.id}-kcal">0 kcal</span>
+                    </div>
+                `;
+            });
+            document.getElementById('meals-container').innerHTML = html;
+        }
+        
+        function actualizarPorcentajeComida(id, valor) {
+            let comida = comidasActivas.find(c => c.id === id);
+            if (comida) {
+                comida.porcentaje = parseInt(valor);
+                document.getElementById(`${id}-percent`).innerText = comida.porcentaje + '%';
+                actualizarDistribucionComidas();
+            }
+        }
+        
+        function actualizarDistribucionComidas() {
+            let caloriasTotales = parseFloat(document.getElementById('calorias-diarias').value);
+            if (!caloriasTotales) return;
+            
+            let suma = 0;
+            comidasActivas.forEach(comida => {
+                suma += comida.porcentaje;
+                let kcal = (caloriasTotales * comida.porcentaje) / 100;
+                let elemento = document.getElementById(`${comida.id}-kcal`);
+                if (elemento) elemento.innerText = Math.round(kcal) + ' kcal';
+            });
+            
+            document.getElementById('meal-warning').style.display = suma === 100 ? 'none' : 'block';
+            
+            if (suma === 100 && macrosDiarios.calorias > 0) {
+                mostrarMacrosPorComida();
+            }
+            actualizarObjetivosPorCategoria();
+        }
+
+        function calcularMacrosPorComidaConExclusiones() {
+            let comidasValoresBase = [];
+            comidasActivas.forEach(comida => {
+                let factor = comida.porcentaje / 100;
+                comidasValoresBase.push({
+                    id: comida.id,
+                    nombre: comida.nombre,
+                    porcentaje: comida.porcentaje,
+                    kcal: macrosDiarios.calorias * factor,
+                    carbs: macrosDiarios.carbs * factor,
+                    protein: macrosDiarios.proteinas * factor,
+                    fat: macrosDiarios.grasas * factor
+                });
+            });
+
+            comidasActivas.forEach(comida => {
+                if (!macroExclusions[comida.id]) {
+                    macroExclusions[comida.id] = { carbs: false, protein: false, fat: false };
+                }
+            });
+
+            let resultado = comidasValoresBase.map(c => ({ ...c }));
+            const macros = ['carbs', 'protein', 'fat'];
+
+            macros.forEach(macro => {
+                let totalExcluido = 0;
+                let comidasNoExcluidas = [];
+                let comidasQueExcluyen = [];
+
+                comidasValoresBase.forEach((comida, idx) => {
+                    if (macroExclusions[comida.id][macro]) {
+                        totalExcluido += comida[macro];
+                        comidasQueExcluyen.push(idx);
+                    } else {
+                        comidasNoExcluidas.push(idx);
+                    }
+                });
+
+                if (totalExcluido > 0 && comidasNoExcluidas.length > 0) {
+                    let sumaPorcentajesNoExcluidas = 0;
+                    comidasNoExcluidas.forEach(idx => {
+                        sumaPorcentajesNoExcluidas += comidasValoresBase[idx].porcentaje;
+                    });
+                    comidasNoExcluidas.forEach(idx => {
+                        let proporcion = comidasValoresBase[idx].porcentaje / sumaPorcentajesNoExcluidas;
+                        resultado[idx][macro] += totalExcluido * proporcion;
+                    });
+                    comidasQueExcluyen.forEach(idx => {
+                        resultado[idx][macro] = 0;
+                    });
+                } else if (totalExcluido > 0 && comidasNoExcluidas.length === 0) {
+                    comidasQueExcluyen.forEach(idx => {
+                        resultado[idx][macro] = 0;
+                    });
+                }
+            });
+
+            return resultado;
+        }
+
+        function mostrarMacrosPorComida() {
+            let comidasConMacros = calcularMacrosPorComidaConExclusiones();
+
+            let html = `
+                <table style="width:100%; border-collapse:collapse;">
+                    <tr style="background:#2A7B9B;color:white">
+                        <th style="padding:8px;">Comida</th>
+                        <th style="padding:8px;">🔥 kcal</th>
+                        <th style="padding:8px;">🥔 HC (g)</th>
+                        <th style="padding:8px;">🍗 PRO (g)</th>
+                        <th style="padding:8px;">🧈 GRA (g)</th>
+                        <th style="padding:8px;">⚙️ Excluir</th>
+                    </tr>
+            `;
+
+            comidasConMacros.forEach(comida => {
+                let ex = macroExclusions[comida.id] || { carbs: false, protein: false, fat: false };
+                html += `
+                    <tr style="border-bottom:1px solid #ddd">
+                        <td style="padding:8px;">${comida.nombre}</td>
+                        <td style="padding:8px;text-align:center;">${Math.round(comida.kcal)}</td>
+                        <td style="padding:8px;text-align:center; ${ex.carbs ? 'color:#aaa;' : ''}">
+                            ${ex.carbs ? '0 (redist.)' : comida.carbs.toFixed(1)}
+                        </td>
+                        <td style="padding:8px;text-align:center; ${ex.protein ? 'color:#aaa;' : ''}">
+                            ${ex.protein ? '0 (redist.)' : comida.protein.toFixed(1)}
+                        </td>
+                        <td style="padding:8px;text-align:center; ${ex.fat ? 'color:#aaa;' : ''}">
+                            ${ex.fat ? '0 (redist.)' : comida.fat.toFixed(1)}
+                        </td>
+                        <td style="padding:8px;text-align:center;">
+                            <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="carbs" style="background:${ex.carbs ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 HC</button>
+                            <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="protein" style="background:${ex.protein ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 PRO</button>
+                            <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="fat" style="background:${ex.fat ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 GRA</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</table>`;
+            document.getElementById('meal-macros-content').innerHTML = html;
+            document.getElementById('meal-macros-resultado').style.display = 'block';
+
+            document.querySelectorAll('.macro-toggle-btn').forEach(btn => {
+                if (btn._handler) btn.removeEventListener('click', btn._handler);
+                const handler = (e) => {
+                    e.stopPropagation();
+                    let mealId = btn.getAttribute('data-meal');
+                    let macro = btn.getAttribute('data-macro');
+                    toggleMacroExclusion(mealId, macro);
+                };
+                btn.addEventListener('click', handler);
+                btn._handler = handler;
+            });
+        }
+
+        function toggleMacroExclusion(mealId, macro) {
+            if (!macroExclusions[mealId]) {
+                macroExclusions[mealId] = { carbs: false, protein: false, fat: false };
+            }
+            macroExclusions[mealId][macro] = !macroExclusions[mealId][macro];
+            mostrarMacrosPorComida(); 
+            actualizarObjetivosPorCategoria();
+        }
+
+        function aplicarPresetComidas(preset) {
+            if (preset === 'equilibrado') {
+                if (comidasActivas.length === 5) {
+                    comidasActivas[0].porcentaje = 25;
+                    comidasActivas[1].porcentaje = 10;
+                    comidasActivas[2].porcentaje = 30;
+                    comidasActivas[3].porcentaje = 10;
+                    comidasActivas[4].porcentaje = 25;
+                } else if (comidasActivas.length === 3) {
+                    comidasActivas[0].porcentaje = 33;
+                    comidasActivas[1].porcentaje = 34;
+                    comidasActivas[2].porcentaje = 33;
+                }
+            } else if (preset === 'fitness') {
+                if (comidasActivas.length === 5) {
+                    comidasActivas[0].porcentaje = 20;
+                    comidasActivas[1].porcentaje = 15;
+                    comidasActivas[2].porcentaje = 35;
+                    comidasActivas[3].porcentaje = 15;
+                    comidasActivas[4].porcentaje = 15;
+                }
+            } else if (preset === 'ayuno') {
+                if (comidasActivas.length >= 3) {
+                    comidasActivas.forEach(c => c.porcentaje = 0);
+                    comidasActivas[0].porcentaje = 30;
+                    comidasActivas[2].porcentaje = 40;
+                    comidasActivas[comidasActivas.length - 1].porcentaje = 30;
+                }
+            } else if (preset === 'completo') {
+                if (comidasActivas.length === 5) {
+                    comidasActivas[0].porcentaje = 20;
+                    comidasActivas[1].porcentaje = 15;
+                    comidasActivas[2].porcentaje = 30;
+                    comidasActivas[3].porcentaje = 15;
+                    comidasActivas[4].porcentaje = 20;
+                }
+            }
+            
+            generarInterfazComidas();
+            actualizarDistribucionComidas();
+        }
+
+        function exportarDistribucionComidas() {
+            if (!macrosDiarios.calorias || macrosDiarios.calorias === 0) {
+                alert('Primero calcula los macros diarios en la pestaña Macros');
+                return;
+            }
+
+            const nombrePaciente = document.getElementById('nombre-paciente').value.trim() || "No especificado";
+            const edad = document.getElementById('edad').value || "—";
+            const sexoSelect = document.getElementById('sexo');
+            const sexo = sexoSelect.options[sexoSelect.selectedIndex]?.text || "—";
+            const objetivoSelect = document.getElementById('objetivo');
+            let objetivoTexto = "";
+            switch(objetivoSelect.value) {
+                case 'mantener': objetivoTexto = "Mantenimiento de peso"; break;
+                case 'definir': objetivoTexto = "Definición (déficit calórico)"; break;
+                case 'volumen': objetivoTexto = "Volumen muscular (superávit calórico)"; break;
+                default: objetivoTexto = "Personalizado";
+            }
+            const numeroComidas = comidasActivas.length;
+            const fecha = new Date().toLocaleDateString();
+
+            let aguaRecomendada = { litros: "—", vasos: "—", formula: "—" };
+            if (pesoActual) {
+                const actividad = parseFloat(document.getElementById('actividad').value);
+                const agua = calcularAguaRecomendada(pesoActual, actividad);
+                aguaRecomendada = { litros: agua.litros, vasos: agua.vasos, formula: `${agua.factor} ml/kg` };
+            }
+
+            let comidasConMacros = calcularMacrosPorComidaConExclusiones();
+            const caloriasTotales = macrosDiarios.calorias;
+            const carbsTotal = macrosDiarios.carbs;
+            const protTotal = macrosDiarios.proteinas;
+            const grasTotal = macrosDiarios.grasas;
+
+            let html = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Plan Nutricional - BeeGreen</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; line-height: 1.4; color: #333; }
+                        h1 { color: #2A7B9B; border-bottom: 2px solid #2A7B9B; padding-bottom: 5px; }
+                        h2 { color: #337522; margin-top: 25px; font-size: 1.4em; border-left: 4px solid #2A7B9B; padding-left: 12px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .datos-paciente { background: #f5f5f5; padding: 12px 20px; border-radius: 10px; margin: 20px 0; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+                        th { background: #2A7B9B; color: white; }
+                        .total-row { background: #e8f4f8; font-weight: bold; }
+                        footer { margin-top: 40px; text-align: center; font-size: 0.8em; color: #888; border-top: 1px solid #eee; padding-top: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>🐝 BeeGreen CALC</h1>
+                        <div>Plan Nutricional Personalizado</div>
+                    </div>
+                    <div class="datos-paciente">
+                        <p><strong>📋 Nombre:</strong> ${nombrePaciente} | <strong>🎂 Edad:</strong> ${edad} años | <strong>⚥ Sexo:</strong> ${sexo}</p>
+                        <p><strong>📅 Fecha:</strong> ${fecha} | <strong>🎯 Objetivo:</strong> ${objetivoTexto} | <strong>🍽️ Comidas:</strong> ${numeroComidas}</p>
+                    </div>
+                    <h2>📊 Macronutrientes Diarios</h2>
+                    <p><strong>Total:</strong> ${Math.round(caloriasTotales)} kcal | 🥔 Carbs: ${carbsTotal.toFixed(1)}g | 🍗 Prot: ${protTotal.toFixed(1)}g | 🧈 Grasas: ${grasTotal.toFixed(1)}g</p>
+                    <h2>💧 Hidratación</h2>
+                    <p>${aguaRecomendada.litros} litros/día (≈ ${aguaRecomendada.vasos} vasos)</p>
+                    <h2>🍽️ Distribución por Comidas</h2>
+                    <table>
+                        <tr><th>Comida</th><th>%</th><th>kcal</th><th>HC (g)</th><th>PRO (g)</th><th>GRA (g)</th></tr>
+            `;
+
+            comidasConMacros.forEach(comida => {
+                let ex = macroExclusions[comida.id] || { carbs: false, protein: false, fat: false };
+                html += `
+                    <tr>
+                        <td>${comida.nombre}</td>
+                        <td>${comida.porcentaje}%</td>
+                        <td>${Math.round(comida.kcal)}</td>
+                        <td>${ex.carbs ? '0' : comida.carbs.toFixed(1)}</td>
+                        <td>${ex.protein ? '0' : comida.protein.toFixed(1)}</td>
+                        <td>${ex.fat ? '0' : comida.fat.toFixed(1)}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        <tr class="total-row">
+                            <td colspan="2"><strong>TOTAL</strong></td>
+                            <td><strong>${Math.round(caloriasTotales)}</strong></td>
+                            <td><strong>${carbsTotal.toFixed(1)}</strong></td>
+                            <td><strong>${protTotal.toFixed(1)}</strong></td>
+                            <td><strong>${grasTotal.toFixed(1)}</strong></td>
+                        </tr>
+                    </table>
+                    <footer>Plan generado por BeeGreen CALC - Sistema Profesional para Nutricionistas<br>Lic. Pedro Rosales</footer>
+                </body>
+                </html>
+            `;
+
+            let blob = new Blob([html], { type: 'application/msword' });
+            let enlace = document.createElement('a');
+            enlace.href = URL.createObjectURL(blob);
+            enlace.download = `Plan_Nutricional_${nombrePaciente.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.doc`;
+            enlace.click();
+            URL.revokeObjectURL(enlace.href);
+        }
+
+        // --------------------------------------------------------------
+        // 9. FUNCIONES DE BÚSQUEDA Y FILTRADO DE ALIMENTOS
+        // --------------------------------------------------------------
+        function aplicarFiltrosAvanzados() {
+            let searchTerm = document.getElementById('search-food').value.toLowerCase();
+            let calMin = parseFloat(document.getElementById('filter-cal-min').value);
+            let calMax = parseFloat(document.getElementById('filter-cal-max').value);
+            let protMin = parseFloat(document.getElementById('filter-prot-min').value);
+            let fatMin = parseFloat(document.getElementById('filter-fat-min').value);
+            let carbMin = parseFloat(document.getElementById('filter-carb-min').value);
+            
+            let filtrados = alimentosDB.filter(alimento => {
+                if (searchTerm && !alimento.nombre.toLowerCase().includes(searchTerm)) return false;
+                if (!isNaN(calMin) && alimento.calorias < calMin) return false;
+                if (!isNaN(calMax) && alimento.calorias > calMax) return false;
+                if (!isNaN(protMin) && alimento.proteinas < protMin) return false;
+                if (!isNaN(fatMin) && alimento.grasas < fatMin) return false;
+                if (!isNaN(carbMin) && alimento.carbohidratos < carbMin) return false;
+                return true;
+            });
+            
+            mostrarListaAlimentos(filtrados);
+        }
+        
+        function limpiarFiltros() {
+            document.getElementById('search-food').value = '';
+            document.getElementById('filter-cal-min').value = '';
+            document.getElementById('filter-cal-max').value = '';
+            document.getElementById('filter-prot-min').value = '';
+            document.getElementById('filter-fat-min').value = '';
+            document.getElementById('filter-carb-min').value = '';
+            mostrarListaAlimentos(alimentosDB);
+        }
+        
+        function buscarAlimento() {
+            aplicarFiltrosAvanzados();
+        }
+        
+        function cargarListaAlimentos() {
+            mostrarListaAlimentos(alimentosDB);
+        }
+        
+        function mostrarListaAlimentos(alimentos) {
+            const contenedor = document.getElementById('food-list');
+            if (!contenedor) return;
+            
+            contenedor.innerHTML = '';
+            alimentos.slice(0, 100).forEach(alimento => {
+                const div = document.createElement('div');
+                div.className = 'food-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${alimento.nombre}</strong>
+                        <span class="badge">${alimento.calorias} kcal/100g</span>
+                    </div>
+                    <div style="font-size:0.75rem;">
+                        🍗${alimento.proteinas}g 🧈${alimento.grasas}g 🥔${alimento.carbohidratos}g
+                    </div>
+                `;
+                div.onclick = () => seleccionarAlimento(alimento);
+                contenedor.appendChild(div);
+            });
+        }
+        
+        function seleccionarAlimento(alimento) {
+            alimentoSeleccionado = alimento;
+            document.getElementById('search-food').value = alimento.nombre;
+            document.querySelectorAll('.food-item').forEach(item => item.classList.remove('selected'));
+            if (event && event.target) {
+                let target = event.target;
+                while (target && !target.classList.contains('food-item')) {
+                    target = target.parentElement;
+                }
+                if (target) target.classList.add('selected');
+            }
+        }
+
+        // --------------------------------------------------------------
+        // 10. FUNCIONES DEL MENÚ ACTUAL
+        // --------------------------------------------------------------
+        function agregarAlMenu() {
+            if (!alimentoSeleccionado) return alert('Seleccione un alimento');
+            
+            let cantidad = parseFloat(document.getElementById('cantidad').value);
+            if (!cantidad || cantidad <= 0) return alert('Ingrese una cantidad válida');
+            
+            let factor = cantidad / 100;
+            let item = {
+                id: Date.now(),
+                nombre: alimentoSeleccionado.nombre,
+                cantidad: cantidad,
+                calorias: Math.round(alimentoSeleccionado.calorias * factor),
+                proteinas: (alimentoSeleccionado.proteinas * factor).toFixed(1),
+                grasas: (alimentoSeleccionado.grasas * factor).toFixed(1),
+                carbohidratos: (alimentoSeleccionado.carbohidratos * factor).toFixed(1),
+                alimentoBase: { ...alimentoSeleccionado }
+            };
+            
+            menuActual.push(item);
+            actualizarMenu();
+            actualizarObjetivosPorCategoria();
+        }
+        
+        function actualizarMenu() {
+            const contenedor = document.getElementById('menu-items');
+            if (!contenedor) return;
+            
+            if (menuActual.length === 0) {
+                contenedor.innerHTML = '<p style="color:#999;">No hay alimentos agregados</p>';
+                document.getElementById('menu-total').style.display = 'none';
+                return;
+            }
+            
+            contenedor.innerHTML = '';
+            let totalCal = 0, totalProt = 0, totalGras = 0, totalCarb = 0;
+            
+            menuActual.forEach(item => {
+                totalCal += item.calorias;
+                totalProt += parseFloat(item.proteinas);
+                totalGras += parseFloat(item.grasas);
+                totalCarb += parseFloat(item.carbohidratos);
+                
+                const div = document.createElement('div');
+                div.className = 'menu-item';
+                div.innerHTML = `
+                    <div class="menu-item-info">
+                        <div class="menu-item-name">${item.nombre}</div>
+                        <div class="menu-item-nutri">
+                            🔥 ${item.calorias} kcal | 🍗 ${item.proteinas}g | 🧈 ${item.grasas}g | 🥔 ${item.carbohidratos}g
+                        </div>
+                    </div>
+                    <div class="menu-item-actions">
+                        <div class="edit-quantity">
+                            <input type="number" id="qty-${item.id}" value="${item.cantidad}" step="10">
+                            <span>g</span>
+                            <button class="update-btn" onclick="actualizarCantidad(${item.id}, document.getElementById('qty-${item.id}').value)">✓</button>
+                        </div>
+                        <button class="delete-btn" onclick="eliminarDelMenu(${item.id})">🗑️</button>
+                    </div>
+                `;
+                contenedor.appendChild(div);
+            });
+            
+            document.getElementById('menu-total').style.display = 'block';
+            document.getElementById('menu-total').innerHTML = `
+                <h3>📊 Resumen del Menú</h3>
+                <div class="result-item">
+                    <span>🔥 Calorías totales:</span>
+                    <span><strong>${totalCal} kcal</strong></span>
+                </div>
+                <div class="result-item">
+                    <span>🍗 Proteínas:</span>
+                    <span>${totalProt.toFixed(1)} g</span>
+                </div>
+                <div class="result-item">
+                    <span>🧈 Grasas:</span>
+                    <span>${totalGras.toFixed(1)} g</span>
+                </div>
+                <div class="result-item">
+                    <span>🥔 Carbohidratos:</span>
+                    <span>${totalCarb.toFixed(1)} g</span>
+                </div>
+            `;
+        }
+        
+        function actualizarCantidad(id, nuevaCantidad) {
+            let item = menuActual.find(i => i.id === id);
+            if (!item) return;
+            
+            let cantidad = parseFloat(nuevaCantidad);
+            if (isNaN(cantidad) || cantidad <= 0) return alert('Ingrese una cantidad válida');
+            
+            let factor = cantidad / 100;
+            item.cantidad = cantidad;
+            item.calorias = Math.round(item.alimentoBase.calorias * factor);
+            item.proteinas = (item.alimentoBase.proteinas * factor).toFixed(1);
+            item.grasas = (item.alimentoBase.grasas * factor).toFixed(1);
+            item.carbohidratos = (item.alimentoBase.carbohidratos * factor).toFixed(1);
+            
+            actualizarMenu();
+            actualizarObjetivosPorCategoria();
+        }
+        
+        function eliminarDelMenu(id) {
+            menuActual = menuActual.filter(item => item.id !== id);
+            actualizarMenu();
+            actualizarObjetivosPorCategoria();
+        }
+        
+        function limpiarMenu() {
+            menuActual = [];
+            actualizarMenu();
+            alimentoSeleccionado = null;
+            cargarListaAlimentos();
+            actualizarObjetivosPorCategoria();
+        }
+
+        // --------------------------------------------------------------
+        // 11. SEGUIMIENTO DE OBJETIVOS
+        // --------------------------------------------------------------
+        function actualizarObjetivosPorCategoria() {
+            if (macrosDiarios.calorias === 0 || macrosDiarios.calorias === undefined) {
+                document.getElementById('goal-tracker').style.display = 'none';
+                return;
+            }
+            
+            let categoria = document.getElementById('menu-categoria').value;
+            let comidasConMacros = calcularMacrosPorComidaConExclusiones();
+            
+            let comidaObj = comidasConMacros.find(c => {
+                if (categoria === 'Desayuno') return c.id === 'desayuno';
+                if (categoria === 'Merienda AM') return c.id === 'merienda-am';
+                if (categoria === 'Almuerzo') return c.id === 'almuerzo';
+                if (categoria === 'Merienda PM') return c.id === 'merienda-pm';
+                if (categoria === 'Cena') return c.id === 'cena';
+                if (categoria === 'Merienda Post Cena') return c.id === 'merienda-post-cena';
+                return false;
+            });
+            
+            if (!comidaObj) {
+                document.getElementById('goal-tracker').style.display = 'none';
+                return;
+            }
+            
+            let objetivoCal = comidaObj.kcal;
+            let objetivoProt = comidaObj.protein;
+            let objetivoGras = comidaObj.fat;
+            let objetivoCarb = comidaObj.carbs;
+            
+            let totalCal = menuActual.reduce((sum, i) => sum + i.calorias, 0);
+            let totalProt = menuActual.reduce((sum, i) => sum + parseFloat(i.proteinas), 0);
+            let totalGras = menuActual.reduce((sum, i) => sum + parseFloat(i.grasas), 0);
+            let totalCarb = menuActual.reduce((sum, i) => sum + parseFloat(i.carbohidratos), 0);
+            
+            let faltaCal = objetivoCal - totalCal;
+            let faltaProt = objetivoProt - totalProt;
+            let faltaGras = objetivoGras - totalGras;
+            let faltaCarb = objetivoCarb - totalCarb;
+            
+            let porcCal = Math.min(100, Math.max(0, (totalCal / objetivoCal) * 100));
+            let porcProt = Math.min(100, Math.max(0, (totalProt / objetivoProt) * 100));
+            let porcGras = Math.min(100, Math.max(0, (totalGras / objetivoGras) * 100));
+            let porcCarb = Math.min(100, Math.max(0, (totalCarb / objetivoCarb) * 100));
+            
+            document.getElementById('goal-tracker').style.display = 'block';
+            document.getElementById('goal-content').innerHTML = `
+                <div class="goal-progress">
+                    <div class="label">
+                        <span>🔥 Calorías</span>
+                        <span>${Math.round(totalCal)} / ${Math.round(objetivoCal)} kcal</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${totalCal > objetivoCal ? 'over' : ''}" style="width:${porcCal}%"></div>
+                    </div>
+                    <div class="goal-value ${faltaCal >= 0 ? '' : 'warning'}">
+                        ${faltaCal > 0 ? `📈 Faltan ${Math.round(faltaCal)} kcal` : (faltaCal < 0 ? `⚠️ Exceso de ${Math.abs(Math.round(faltaCal))} kcal` : '✅ Meta alcanzada')}
+                    </div>
+                </div>
+                <div class="goal-progress">
+                    <div class="label">
+                        <span>🍗 Proteínas</span>
+                        <span>${totalProt.toFixed(1)} / ${objetivoProt.toFixed(1)} g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${totalProt > objetivoProt ? 'over' : ''}" style="width:${porcProt}%"></div>
+                    </div>
+                    <div class="goal-value ${faltaProt >= 0 ? '' : 'warning'}">
+                        ${faltaProt > 0 ? `📈 Faltan ${faltaProt.toFixed(1)} g` : (faltaProt < 0 ? `⚠️ Exceso de ${Math.abs(faltaProt).toFixed(1)} g` : '✅ Meta alcanzada')}
+                    </div>
+                </div>
+                <div class="goal-progress">
+                    <div class="label">
+                        <span>🧈 Grasas</span>
+                        <span>${totalGras.toFixed(1)} / ${objetivoGras.toFixed(1)} g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${totalGras > objetivoGras ? 'over' : ''}" style="width:${porcGras}%"></div>
+                    </div>
+                    <div class="goal-value ${faltaGras >= 0 ? '' : 'warning'}">
+                        ${faltaGras > 0 ? `📈 Faltan ${faltaGras.toFixed(1)} g` : (faltaGras < 0 ? `⚠️ Exceso de ${Math.abs(faltaGras).toFixed(1)} g` : '✅ Meta alcanzada')}
+                    </div>
+                </div>
+                <div class="goal-progress">
+                    <div class="label">
+                        <span>🥔 Carbohidratos</span>
+                        <span>${totalCarb.toFixed(1)} / ${objetivoCarb.toFixed(1)} g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${totalCarb > objetivoCarb ? 'over' : ''}" style="width:${porcCarb}%"></div>
+                    </div>
+                    <div class="goal-value ${faltaCarb >= 0 ? '' : 'warning'}">
+                        ${faltaCarb > 0 ? `📈 Faltan ${faltaCarb.toFixed(1)} g` : (faltaCarb < 0 ? `⚠️ Exceso de ${Math.abs(faltaCarb).toFixed(1)} g` : '✅ Meta alcanzada')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --------------------------------------------------------------
+        // 12. EXPORTACIÓN Y GUARDADO DE MENÚS
+        // --------------------------------------------------------------
+        function exportarMenu() {
+            if (menuActual.length === 0) return alert('No hay items en el menú');
+            
+            let totalCal = menuActual.reduce((s, i) => s + i.calorias, 0);
+            let totalProt = menuActual.reduce((s, i) => s + parseFloat(i.proteinas), 0);
+            let totalGras = menuActual.reduce((s, i) => s + parseFloat(i.grasas), 0);
+            let totalCarb = menuActual.reduce((s, i) => s + parseFloat(i.carbohidratos), 0);
+            
+            let html = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Menú Nutricional - BeeGreen</title>
+                    <style>
+                        body { font-family: Arial; margin: 40px; }
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background: #2A7B9B; color: white; }
+                    </style>
+                </head>
+                <body>
+                    <h1>🐝 BeeGreen CALC - Menú Nutricional</h1>
+                    <p>Fecha: ${new Date().toLocaleDateString()}</p>
+                    <h2>Lista de Alimentos</h2>
+                    <table>
+                        <tr>
+                            <th>Alimento</th>
+                            <th>Cantidad</th>
+                            <th>🔥 kcal</th>
+                            <th>🍗 Proteínas</th>
+                            <th>🧈 Grasas</th>
+                            <th>🥔 Carbos</th>
+                        </tr>
+                        ${menuActual.map(i => `
+                            <tr>
+                                <td>${i.nombre}</td>
+                                <td>${i.cantidad}g</td>
+                                <td>${i.calorias}</td>
+                                <td>${i.proteinas}g</td>
+                                <td>${i.grasas}g</td>
+                                <td>${i.carbohidratos}g</td>
+                            </tr>
+                        `).join('')}
+                        <tr style="background:#e8f4f8;font-weight:bold">
+                            <td colspan="2">TOTAL</td>
+                            <td>${totalCal} kcal</td>
+                            <td>${totalProt.toFixed(1)}g</td>
+                            <td>${totalGras.toFixed(1)}g</td>
+                            <td>${totalCarb.toFixed(1)}g</td>
+                        </tr>
+                    </table>
+                    <footer>
+                        <p>Generado por BeeGreen CALC - Sistema para Nutricionistas</p>
+                    </footer>
+                </body>
+                </html>
+            `;
+            
+            let blob = new Blob([html], { type: 'application/msword' });
+            let enlace = document.createElement('a');
+            enlace.href = URL.createObjectURL(blob);
+            enlace.download = `menu_${new Date().toISOString().slice(0, 10)}.doc`;
+            enlace.click();
+            URL.revokeObjectURL(enlace.href);
+        }
+        
+        function guardarMenu() {
+            if (menuActual.length === 0) return alert('No hay alimentos en el menú');
+            
+            let nombre = document.getElementById('menu-nombre').value.trim();
+            if (!nombre) return alert('Ingrese un nombre para el menú');
+            
+            let categoria = document.getElementById('menu-categoria').value;
+            let totalCal = menuActual.reduce((s, i) => s + i.calorias, 0);
+            let totalProt = menuActual.reduce((s, i) => s + parseFloat(i.proteinas), 0);
+            let totalGras = menuActual.reduce((s, i) => s + parseFloat(i.grasas), 0);
+            let totalCarb = menuActual.reduce((s, i) => s + parseFloat(i.carbohidratos), 0);
+            
+            let nuevoMenu = {
+                id: Date.now().toString(),
+                nombre: nombre,
+                categoria: categoria,
+                fecha: new Date().toISOString(),
+                items: menuActual.map(({ alimentoBase, ...resto }) => resto),
+                totales: {
+                    calorias: totalCal,
+                    proteinas: totalProt.toFixed(1),
+                    grasas: totalGras.toFixed(1),
+                    carbohidratos: totalCarb.toFixed(1)
+                }
+            };
+            
+            menusGuardados.unshift(nuevoMenu);
+            guardarMenusEnStorage();
+            alert(`✅ Menú "${nombre}" guardado exitosamente`);
+            document.getElementById('menu-nombre').value = '';
+            actualizarListaMenus();
+        }
+
+        // --------------------------------------------------------------
+        // 13. FUNCIONES PARA MENÚS GUARDADOS
+        // --------------------------------------------------------------
+        function toggleSelectionMode() {
+            selectionMode = !selectionMode;
+            let btn = document.getElementById('toggleSelectionModeBtn');
+            let info = document.getElementById('selectionInfo');
+            
+            if (selectionMode) {
+                btn.textContent = '✖ Desactivar Selección';
+                btn.style.background = '#dc3545';
+                info.style.display = 'block';
+            } else {
+                btn.textContent = '✓ Activar Selección Múltiple';
+                btn.style.background = '';
+                info.style.display = 'none';
+                limpiarSeleccion();
+            }
+            actualizarListaMenus();
+        }
+        
+        function toggleMenuSelection(id) {
+            if (!selectionMode) return;
+            
+            if (selectedMenus.has(id)) {
+                selectedMenus.delete(id);
+            } else {
+                selectedMenus.add(id);
+            }
+            
+            let tarjeta = document.getElementById(`menu-card-${id}`);
+            if (tarjeta) tarjeta.classList.toggle('selected', selectedMenus.has(id));
+            actualizarContadorSeleccion();
+        }
+        
+        function actualizarContadorSeleccion() {
+            document.getElementById('selectedCount').textContent = selectedMenus.size;
+        }
+        
+        function limpiarSeleccion() {
+            selectedMenus.clear();
+            actualizarContadorSeleccion();
+            actualizarListaMenus();
+            document.getElementById('dailyPlanPreview').style.display = 'none';
+            currentDailyPlan = null;
+        }
+        
+        function cancelarSeleccion() {
+            toggleSelectionMode();
+        }
+        
+        function crearPlanDiario() {
+            if (selectedMenus.size === 0) return alert('Selecciona al menos un menú para crear el plan diario');
+            
+            let seleccionados = menusGuardados.filter(menu => selectedMenus.has(menu.id));
+            let totalCal = seleccionados.reduce((sum, m) => sum + m.totales.calorias, 0);
+            let totalProt = seleccionados.reduce((sum, m) => sum + parseFloat(m.totales.proteinas), 0);
+            let totalGras = seleccionados.reduce((sum, m) => sum + parseFloat(m.totales.grasas), 0);
+            let totalCarb = seleccionados.reduce((sum, m) => sum + parseFloat(m.totales.carbohidratos), 0);
+            
+            currentDailyPlan = {
+                menus: seleccionados,
+                totals: {
+                    calorias: totalCal,
+                    proteinas: totalProt.toFixed(1),
+                    grasas: totalGras.toFixed(1),
+                    carbohidratos: totalCarb.toFixed(1)
+                },
+                fecha: new Date().toLocaleDateString()
+            };
+            
+            mostrarVistaPreviaPlan();
+        }
+        
+        function mostrarVistaPreviaPlan() {
+            if (!currentDailyPlan) return;
+            
+            document.getElementById('dailyPlanContent').innerHTML = `
+                <div style="background:linear-gradient(135deg,#2A7B9B,#337522);color:white;padding:15px;border-radius:10px;margin-bottom:15px">
+                    <strong>📊 TOTAL DEL PLAN DIARIO</strong><br>
+                    🔥 ${Math.round(currentDailyPlan.totals.calorias)} kcal | 🍗 ${currentDailyPlan.totals.proteinas}g | 🧈 ${currentDailyPlan.totals.grasas}g | 🥔 ${currentDailyPlan.totals.carbohidratos}g
+                </div>
+                <div><strong>📋 Menús seleccionados (${currentDailyPlan.menus.length}):</strong></div>
+                ${currentDailyPlan.menus.map(m => `
+                    <div style="padding:10px;margin:5px 0;background:#f8f9fa;border-radius:8px">
+                        📌 <strong>${m.nombre}</strong> (${m.categoria}) - ${m.totales.calorias} kcal
+                    </div>
+                `).join('')}
+            `;
+            
+            document.getElementById('dailyPlanPreview').style.display = 'block';
+        }
+        
+        function exportarPlanDiario() {
+            if (!currentDailyPlan) return alert('Primero crea un plan diario seleccionando menús');
+            
+            let html = `
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Plan Diario - BeeGreen</title>
+                    <style>
+                        body { font-family: Arial; margin: 40px; }
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid #ddd; padding: 8px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>🐝 BeeGreen CALC - Plan Nutricional Diario</h1>
+                    <p>Fecha: ${currentDailyPlan.fecha}</p>
+                    <h2>Resumen Total</h2>
+                    <p>🔥 Calorías: ${Math.round(currentDailyPlan.totals.calorias)} kcal</p>
+                    <p>🍗 Proteínas: ${currentDailyPlan.totals.proteinas} g</p>
+                    <p>🧈 Grasas: ${currentDailyPlan.totals.grasas} g</p>
+                    <p>🥔 Carbohidratos: ${currentDailyPlan.totals.carbohidratos} g</p>
+                    <h2>Menús del Día</h2>
+                    <ul>
+                        ${currentDailyPlan.menus.map(m => `<li><strong>${m.nombre}</strong> (${m.categoria}) - ${m.totales.calorias} kcal</li>`).join('')}
+                    </ul>
+                    <footer><p>Generado por BeeGreen CALC</p></footer>
+                </body>
+                </html>
+            `;
+            
+            let blob = new Blob([html], { type: 'application/msword' });
+            let enlace = document.createElement('a');
+            enlace.href = URL.createObjectURL(blob);
+            enlace.download = `plan_diario_${new Date().toISOString().slice(0, 10)}.doc`;
+            enlace.click();
+            URL.revokeObjectURL(enlace.href);
+        }
+        
+        function actualizarListaMenus() {
+            const contenedor = document.getElementById('saved-menus-list');
+            if (!contenedor) return;
+            
+            cargarMenusGuardados();
+            
+            if (menusGuardados.length === 0) {
+                contenedor.innerHTML = '<p style="color:#999; text-align:center; grid-column:1/-1;">📭 No hay menús guardados. Crea tu primer menú en la pestaña "Crear Menú"</p>';
+                return;
+            }
+            
+            contenedor.innerHTML = '';
+            
+            menusGuardados.forEach(menu => {
+                const tarjeta = document.createElement('div');
+                tarjeta.className = 'saved-menu-card';
+                if (selectedMenus.has(menu.id)) tarjeta.classList.add('selected');
+                tarjeta.id = `menu-card-${menu.id}`;
+                
+                if (selectionMode) {
+                    tarjeta.innerHTML = `
+                        <input type="checkbox" class="menu-checkbox" ${selectedMenus.has(menu.id) ? 'checked' : ''} onchange="event.stopPropagation(); toggleMenuSelection('${menu.id}')">
+                        <span style="background:#2A7B9B;color:white;padding:2px 8px;border-radius:20px;font-size:0.7rem;">${menu.categoria}</span>
+                        <h4 style="margin-top:8px;">${menu.nombre}</h4>
+                        <div>🔥 ${menu.totales.calorias} kcal | 🍗 ${menu.totales.proteinas}g</div>
+                        <div style="font-size:0.7rem;color:#666;">📅 ${new Date(menu.fecha).toLocaleDateString()}</div>
+                        <button class="delete-btn" style="margin-top:8px;" onclick="event.stopPropagation(); eliminarMenuGuardado('${menu.id}')">🗑️ Eliminar</button>
+                    `;
+                    tarjeta.onclick = (e) => {
+                        if (e.target.type !== 'checkbox' && !e.target.classList.contains('delete-btn')) {
+                            let checkbox = tarjeta.querySelector('input');
+                            checkbox.checked = !checkbox.checked;
+                            toggleMenuSelection(menu.id);
+                        }
+                    };
+                } else {
+                    tarjeta.innerHTML = `
+                        <span style="background:#2A7B9B;color:white;padding:2px 8px;border-radius:20px;font-size:0.7rem;">${menu.categoria}</span>
+                        <h4 style="margin-top:8px;">${menu.nombre}</h4>
+                        <div>🔥 ${menu.totales.calorias} kcal | 🍗 ${menu.totales.proteinas}g</div>
+                        <div style="font-size:0.7rem;color:#666;">📅 ${new Date(menu.fecha).toLocaleDateString()}</div>
+                        <button class="delete-btn" style="margin-top:8px;" onclick="event.stopPropagation(); eliminarMenuGuardado('${menu.id}')">🗑️ Eliminar</button>
+                    `;
+                    tarjeta.onclick = () => {
+                        menuActual = menu.items.map(item => ({
+                            ...item,
+                            id: Date.now() + Math.random(),
+                            alimentoBase: alimentosDB.find(a => a.nombre === item.nombre) || {
+                                calorias: item.calorias,
+                                proteinas: parseFloat(item.proteinas),
+                                grasas: parseFloat(item.grasas),
+                                carbohidratos: parseFloat(item.carbohidratos)
+                            }
+                        }));
+                        actualizarMenu();
+                        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                        document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                        showTabDirect('menu');
+                    };
+                }
+                
+                contenedor.appendChild(tarjeta);
+            });
+        }
+        
+        function showTabDirect(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.getElementById(`${tab}-tab`).style.display = 'block';
+            if (tab === 'menu') {
+                cargarListaAlimentos();
+                actualizarObjetivosPorCategoria();
+            }
+        }
+        
+        function eliminarMenuGuardado(id) {
+            if (confirm('¿Eliminar este menú permanentemente?')) {
+                menusGuardados = menusGuardados.filter(menu => menu.id !== id);
+                selectedMenus.delete(id);
+                guardarMenusEnStorage();
+                actualizarListaMenus();
+                actualizarContadorSeleccion();
+                if (selectedMenus.size === 0) {
+                    document.getElementById('dailyPlanPreview').style.display = 'none';
+                }
+            }
+        }
+
+        // --------------------------------------------------------------
+        // 14. FUNCIONES DE RESPALDO
+        // --------------------------------------------------------------
+        function abrirModalBackup() {
+            document.getElementById('backupInfoList').innerHTML = `
+                <li>📁 Menús guardados: ${menusGuardados.length}</li>
+                <li>🍎 Base de datos: ${alimentosDB.length} alimentos</li>
+                <li>💾 Los datos se guardan localmente</li>
+            `;
+            document.getElementById('backupModal').style.display = 'flex';
+        }
+        
+        function cerrarModalBackup() {
+            document.getElementById('backupModal').style.display = 'none';
+        }
+        
+        function exportarBackup() {
+            let datos = {
+                version: "1.0",
+                fecha: new Date().toISOString(),
+                menus: menusGuardados,
+                alimentos: alimentosDB
+            };
+            
+            let blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+            let enlace = document.createElement('a');
+            enlace.href = URL.createObjectURL(blob);
+            enlace.download = `beegreen_backup_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+            enlace.click();
+            alert('✅ Respaldo exportado exitosamente');
+            cerrarModalBackup();
+        }
+        
+        function importarBackup() {
+            document.getElementById('backupFileInput').click();
+        }
+        
+        function procesarImportacionBackup(evento) {
+            let archivo = evento.target.files[0];
+            if (!archivo) return;
+            
+            let lector = new FileReader();
+            lector.onload = (e) => {
+                try {
+                    let datos = JSON.parse(e.target.result);
+                    if (datos.menus && Array.isArray(datos.menus)) {
+                        if (confirm(`📥 Importar ${datos.menus.length} menús? Esto REEMPLAZARÁ todos los menús actuales.`)) {
+                            menusGuardados = datos.menus;
+                            guardarMenusEnStorage();
+                            selectedMenus.clear();
+                            actualizarListaMenus();
+                            alert(`✅ Importación exitosa! Se importaron ${datos.menus.length} menús.`);
+                        }
+                    } else {
+                        throw new Error();
+                    }
+                } catch (error) {
+                    alert('❌ Archivo de respaldo inválido o corrupto');
+                } finally {
+                    cerrarModalBackup();
+                    document.getElementById('backupFileInput').value = '';
+                }
+            };
+            lector.readAsText(archivo);
+        }
+
+        // --------------------------------------------------------------
+        // 15. INICIALIZACIÓN
+        // --------------------------------------------------------------
+        window.onclick = function(e) {
+            if (e.target === document.getElementById('backupModal')) {
+                cerrarModalBackup();
+            }
+        };
+    </script>
+</body>
+</html>
