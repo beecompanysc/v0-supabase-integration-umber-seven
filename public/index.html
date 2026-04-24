@@ -135,12 +135,6 @@
             opacity: 0.95;
         }
 
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         /* ========== GRID ========== */
         .grid-2 {
             display: grid;
@@ -729,46 +723,6 @@
             background: #28a745;
         }
 
-        /* ========== AUTH STYLES ========== */
-        .auth-error {
-            display: none;
-            background: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .auth-success {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .auth-loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #2A7B9B;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         /* ========== FOOTER ========== */
         footer {
             background-color: #1a4d2a;
@@ -839,7 +793,7 @@
 </head>
 <body>
     <!-- ========== PANEL DE AUTENTICACIÓN ========== -->
-<div id="auth-container" style="max-width: 500px; margin: 40px auto; display: none;">
+<div id="auth-container" style="max-width: 500px; margin: 40px auto; display: block;">
     <div class="header" style="margin-bottom: 20px;">
         <div class="title-area">
             <h1>🐝 BeeGreen CALC</h1>
@@ -852,7 +806,7 @@
     </div>
     <div id="login-form" class="auth-form" style="background: white; border-radius: 24px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
         <h3 style="color:#2A7B9B;">Bienvenido de vuelta</h3>
-        <div id="login-error" class="auth-error"></div>
+        <div id="login-error" class="auth-error" style="display:none; background:#f8d7da; color:#721c24; padding:10px; border-radius:8px; margin-bottom:15px;"></div>
         <div class="form-group">
             <label>Email</label>
             <input type="email" id="login-email" placeholder="nutricionista@ejemplo.com">
@@ -865,8 +819,8 @@
     </div>
     <div id="register-form" class="auth-form" style="display:none; background: white; border-radius: 24px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
         <h3 style="color:#2A7B9B;">Crear cuenta profesional</h3>
-        <div id="register-error" class="auth-error"></div>
-        <div id="register-success" class="auth-success"></div>
+        <div id="register-error" class="auth-error" style="display:none;"></div>
+        <div id="register-success" class="auth-success" style="display:none; background:#d4edda; color:#155724; padding:10px; border-radius:8px; margin-bottom:15px;"></div>
         <div class="form-group">
             <label>Email</label>
             <input type="email" id="reg-email" placeholder="tu@email.com">
@@ -878,18 +832,6 @@
         <button id="btn-register" style="width:100%">Registrarse</button>
     </div>
 </div>
-
-<!-- ========== LOADING SPINNER ========== -->
-<div id="loading-container" style="max-width: 500px; margin: 40px auto; display: block;">
-    <div class="header" style="margin-bottom: 20px;">
-        <h1>🐝 BeeGreen CALC</h1>
-        <p>Cargando...</p>
-    </div>
-    <div class="auth-loading">
-        <div class="spinner"></div>
-    </div>
-</div>
-
     <div class="container" id="app-container" style="display: none;">
         <!-- ========== HEADER ========== -->
         <div class="header">
@@ -1213,225 +1155,130 @@
     <!-- ========== SCRIPT PRINCIPAL ========== -->
     <script>
         // ==================== CONFIGURACIÓN SUPABASE ====================
-        const SUPABASE_URL = "https://hfuvrkdkiemhjwvnicmj.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmdXZya2RraWVtaGp3dm5pY21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTM2MDUsImV4cCI6MjA5MTc2OTYwNX0.xJz4D7jut0Iz58oY_rl18CFocas-g_60Js9oFUPZToM";
-        // ===============================================================
+// 🔴 REEMPLAZA ESTOS VALORES CON LOS DATOS DE TU PROYECTO SUPABASE 🔴
+const SUPABASE_URL = "https://hfuvrkdkiemhjwvnicmj.supabase.co";      // <--- CAMBIAR
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmdXZya2RraWVtaGp3dm5pY21qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxOTM2MDUsImV4cCI6MjA5MTc2OTYwNX0.xJz4D7jut0Iz58oY_rl18CFocas-g_60Js9oFUPZToM";                     // <--- CAMBIAR
+// ===============================================================
 
-        // Crear cliente de Supabase
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// CORRECCION: Usar nombre diferente para evitar conflicto con el objeto global 'supabase'
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Elementos DOM
-        const authContainer = document.getElementById('auth-container');
-        const appContainer = document.getElementById('app-container');
-        const loadingContainer = document.getElementById('loading-container');
+// Elementos DOM nuevos
+const authContainer = document.getElementById('auth-container');
+const appContainer = document.getElementById('app-container');
+const userEmailSpan = document.createElement('span'); // lo agregaremos luego dinámicamente
 
-        // Funciones de autenticación
-        function showAuthTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(btn => {
-                btn.classList.remove('active');
-                btn.style.background = 'rgba(255,255,255,0.2)';
-                btn.style.color = 'white';
-            });
-            const activeBtn = document.querySelector(`[data-auth-tab="${tab}"]`);
-            activeBtn.classList.add('active');
-            activeBtn.style.background = 'white';
-            activeBtn.style.color = '#2A7B9B';
-            
-            document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
-            document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
-            document.getElementById('login-error').style.display = 'none';
-            document.getElementById('register-error').style.display = 'none';
-            document.getElementById('register-success').style.display = 'none';
+// Funciones de autenticación
+function showAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-auth-tab="${tab}"]`).classList.add('active');
+    document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+    document.getElementById('login-error').style.display = 'none';
+    document.getElementById('register-error').style.display = 'none';
+    document.getElementById('register-success').style.display = 'none';
+}
+
+document.querySelectorAll('.auth-tab').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        showAuthTab(btn.getAttribute('data-auth-tab'));
+    });
+});
+
+// Login
+document.getElementById('btn-login').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errorDiv = document.getElementById('login-error');
+    errorDiv.style.display = 'none';
+    if (!email || !password) {
+        errorDiv.textContent = 'Completa todos los campos';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.style.display = 'block';
+    } else {
+        cargarSesion(data.user);
+    }
+});
+
+// Registro
+document.getElementById('btn-register').addEventListener('click', async () => {
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const errorDiv = document.getElementById('register-error');
+    const successDiv = document.getElementById('register-success');
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    if (!email || !password || password.length < 6) {
+        errorDiv.textContent = 'Email válido y contraseña de al menos 6 caracteres.';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    const { data, error } = await supabaseClient.auth.signUp({ 
+        email, 
+        password,
+        options: {
+            emailRedirectTo: window.location.origin
         }
+    });
+    if (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.style.display = 'block';
+    } else {
+        successDiv.textContent = 'Registro exitoso. ¡Ya puedes iniciar sesión!';
+        successDiv.style.display = 'block';
+        setTimeout(() => showAuthTab('login'), 2000);
+    }
+});
 
-        document.querySelectorAll('.auth-tab').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                showAuthTab(btn.getAttribute('data-auth-tab'));
-            });
+function cargarSesion(user) {
+    authContainer.style.display = 'none';
+    appContainer.style.display = 'block';
+    // Agregar barra de usuario en el header
+    const header = document.querySelector('.header');
+    if (header && !document.getElementById('user-welcome')) {
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.id = 'user-welcome';
+        welcomeDiv.style.display = 'flex';
+        welcomeDiv.style.alignItems = 'center';
+        welcomeDiv.style.gap = '15px';
+        welcomeDiv.innerHTML = `
+            <div style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:50px; font-size:0.9rem;">${user.email}</div>
+            <button id="logout-button" style="background:rgba(0,0,0,0.3); border:none; padding:8px 16px; border-radius:30px; color:white; cursor:pointer;">🚪 Cerrar Sesión</button>
+        `;
+        header.appendChild(welcomeDiv);
+        document.getElementById('logout-button').addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            location.reload(); // Recargar para mostrar login
         });
+    }
+}
 
-        // Login
-        document.getElementById('btn-login').addEventListener('click', async () => {
-            const btn = document.getElementById('btn-login');
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-            const errorDiv = document.getElementById('login-error');
-            errorDiv.style.display = 'none';
-            
-            if (!email || !password) {
-                errorDiv.textContent = 'Completa todos los campos';
-                errorDiv.style.display = 'block';
-                return;
-            }
-            
-            btn.disabled = true;
-            btn.textContent = 'Ingresando...';
-            
-            try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                if (error) {
-                    let errorMessage = error.message;
-                    if (error.message.includes('Invalid login credentials')) {
-                        errorMessage = 'Email o contraseña incorrectos';
-                    } else if (error.message.includes('Email not confirmed')) {
-                        errorMessage = 'Por favor confirma tu email antes de iniciar sesión';
-                    }
-                    errorDiv.textContent = errorMessage;
-                    errorDiv.style.display = 'block';
-                } else {
-                    cargarSesion(data.user);
-                }
-            } catch (err) {
-                errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
-                errorDiv.style.display = 'block';
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Ingresar al Sistema';
-            }
-        });
+async function verificarSesionActual() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session?.user) {
+        cargarSesion(session.user);
+    } else {
+        authContainer.style.display = 'block';
+        appContainer.style.display = 'none';
+    }
+}
 
-        // Permitir login con Enter
-        document.getElementById('login-password').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('btn-login').click();
-            }
-        });
+// Escuchar cambios en la autenticación
+supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session?.user) cargarSesion(session.user);
+    if (event === 'SIGNED_OUT') {
+        authContainer.style.display = 'block';
+        appContainer.style.display = 'none';
+    }
+});
 
-        // Registro
-        document.getElementById('btn-register').addEventListener('click', async () => {
-            const btn = document.getElementById('btn-register');
-            const email = document.getElementById('reg-email').value.trim();
-            const password = document.getElementById('reg-password').value;
-            const errorDiv = document.getElementById('register-error');
-            const successDiv = document.getElementById('register-success');
-            errorDiv.style.display = 'none';
-            successDiv.style.display = 'none';
-            
-            if (!email || !password || password.length < 6) {
-                errorDiv.textContent = 'Email válido y contraseña de al menos 6 caracteres.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-            
-            btn.disabled = true;
-            btn.textContent = 'Registrando...';
-            
-            try {
-                const { data, error } = await supabaseClient.auth.signUp({ 
-                    email, 
-                    password,
-                    options: {
-                        emailRedirectTo: window.location.origin
-                    }
-                });
-                
-                if (error) {
-                    let errorMessage = error.message;
-                    if (error.message.includes('already registered')) {
-                        errorMessage = 'Este email ya está registrado';
-                    }
-                    errorDiv.textContent = errorMessage;
-                    errorDiv.style.display = 'block';
-                } else {
-                    if (data.user && !data.session) {
-                        // El email necesita confirmación
-                        successDiv.textContent = 'Registro exitoso. Revisa tu email para confirmar tu cuenta.';
-                    } else {
-                        successDiv.textContent = 'Registro exitoso. ¡Ya puedes iniciar sesión!';
-                    }
-                    successDiv.style.display = 'block';
-                    document.getElementById('reg-email').value = '';
-                    document.getElementById('reg-password').value = '';
-                    setTimeout(() => showAuthTab('login'), 3000);
-                }
-            } catch (err) {
-                errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
-                errorDiv.style.display = 'block';
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Registrarse';
-            }
-        });
-
-        // Permitir registro con Enter
-        document.getElementById('reg-password').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('btn-register').click();
-            }
-        });
-
-        function cargarSesion(user) {
-            loadingContainer.style.display = 'none';
-            authContainer.style.display = 'none';
-            appContainer.style.display = 'block';
-            
-            // Agregar barra de usuario en el header
-            const header = document.querySelector('#app-container .header');
-            if (header && !document.getElementById('user-welcome')) {
-                const welcomeDiv = document.createElement('div');
-                welcomeDiv.id = 'user-welcome';
-                welcomeDiv.style.display = 'flex';
-                welcomeDiv.style.justifyContent = 'center';
-                welcomeDiv.style.alignItems = 'center';
-                welcomeDiv.style.gap = '15px';
-                welcomeDiv.style.marginTop = '15px';
-                welcomeDiv.innerHTML = `
-                    <div style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:50px; font-size:0.9rem;">👤 ${user.email}</div>
-                    <button id="logout-button" style="background:rgba(220,53,69,0.9); border:none; padding:8px 16px; border-radius:30px; color:white; cursor:pointer; font-weight: 600;">🚪 Cerrar Sesión</button>
-                `;
-                header.appendChild(welcomeDiv);
-                document.getElementById('logout-button').addEventListener('click', async () => {
-                    const btn = document.getElementById('logout-button');
-                    btn.disabled = true;
-                    btn.textContent = 'Cerrando...';
-                    await supabaseClient.auth.signOut();
-                    location.reload();
-                });
-            }
-            
-            // Inicializar la aplicación
-            cargarMenusGuardados();
-            cargarListaAlimentos();
-            generarInterfazComidas();
-        }
-
-        async function verificarSesionActual() {
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (session?.user) {
-                    cargarSesion(session.user);
-                } else {
-                    loadingContainer.style.display = 'none';
-                    authContainer.style.display = 'block';
-                    appContainer.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Error verificando sesión:', error);
-                loadingContainer.style.display = 'none';
-                authContainer.style.display = 'block';
-                appContainer.style.display = 'none';
-            }
-        }
-
-        // Escuchar cambios en la autenticación
-        supabaseClient.auth.onAuthStateChange((event, session) => {
-            console.log('Auth state changed:', event);
-            if (event === 'SIGNED_IN' && session?.user) {
-                cargarSesion(session.user);
-            }
-            if (event === 'SIGNED_OUT') {
-                authContainer.style.display = 'block';
-                appContainer.style.display = 'none';
-                loadingContainer.style.display = 'none';
-                // Remover el welcome div si existe
-                const welcomeDiv = document.getElementById('user-welcome');
-                if (welcomeDiv) welcomeDiv.remove();
-            }
-        });
-
-        // Iniciar verificación al cargar la página
-        verificarSesionActual();
-
+// Iniciar verificación al cargar la página
+verificarSesionActual();
         // --------------------------------------------------------------
         // 1. BASE DE DATOS DE ALIMENTOS (Venezuela)
         // --------------------------------------------------------------
@@ -1486,6 +1333,31 @@
             {codigo:48,nombre:"Pan de centeno",calorias:257,proteinas:9.2,grasas:0.7,carbohidratos:54.6},
             {codigo:49,nombre:"Pan de gluten",calorias:299,proteinas:17.3,grasas:1.8,carbohidratos:54},
             {codigo:50,nombre:"Pan de trigo integral",calorias:241,proteinas:9,grasas:2.6,carbohidratos:51.6},
+            {codigo:51,nombre:"Pan de Horno (25)",calorias:416,proteinas:5.1,grasas:16.7,carbohidratos:67.4},
+            {codigo:52,nombre:"Panela de san Joaquin (26) Pan",calorias:370,proteinas:6.3,grasas:5.3,carbohidratos:74.8},
+            {codigo:53,nombre:"Pasta no enriquecidas",calorias:363,proteinas:15.6,grasas:1.6,carbohidratos:71.9},
+            {codigo:54,nombre:"Pasta no enriquecidas cocidas",calorias:113,proteinas:4.3,grasas:0.6,carbohidratos:22.6},
+            {codigo:55,nombre:"Pasta enriquecidas",calorias:353,proteinas:15,grasas:1.9,carbohidratos:69.3},
+            {codigo:56,nombre:"Pasta enriquecidas cocidas",calorias:124,proteinas:4.6,grasas:0.7,carbohidratos:24.9},
+            {codigo:57,nombre:"Pasta al huevo",calorias:372,proteinas:15.6,grasas:2.3,carbohidratos:72.4},
+            {codigo:58,nombre:"Pasta al huevo cocida",calorias:126,proteinas:6.2,grasas:1,carbohidratos:23.2},
+            {codigo:59,nombre:"Pasta con espinacas",calorias:365,proteinas:14.8,grasas:1.8,carbohidratos:72.8},
+            {codigo:60,nombre:"Pasta con espinacas cocida",calorias:108,proteinas:5.3,grasas:0.8,carbohidratos:27.1},
+            {codigo:61,nombre:"Pasta Semola de trigo Durum",calorias:337,proteinas:12.2,grasas:1.7,carbohidratos:71.4},
+            {codigo:62,nombre:"Pasta Semola granular de trigo panadero",calorias:337,proteinas:11.5,grasas:0.9,carbohidratos:73.5},
+            {codigo:63,nombre:"Trigo afrecho de. Dark North Spring",calorias:170,proteinas:16.3,grasas:4.5,carbohidratos:59.9},
+            {codigo:64,nombre:"Trigo afrecho de. Hard Amber Durum",calorias:172,proteinas:13.3,grasas:5.2,carbohidratos:65.6},
+            {codigo:65,nombre:"Trigo afrecho de, Soft Red Wheath",calorias:193,proteinas:14.2,grasas:4.4,carbohidratos:66.6},
+            {codigo:66,nombre:"Trigo, arepa andina de (2)",calorias:303,proteinas:10.9,grasas:2.6,carbohidratos:59.7},
+            {codigo:67,nombre:"Trigo entero variedad de,(2) (DNS)",calorias:313,proteinas:13.3,grasas:2.2,carbohidratos:72.9},
+            {codigo:68,nombre:"Trigo entero, variedad (HAD)",calorias:316,proteinas:12.9,grasas:2.8,carbohidratos:71.6},
+            {codigo:69,nombre:"Trigo entero variedad de, (SRW)",calorias:313,proteinas:10.4,grasas:2.1,carbohidratos:74.3},
+            {codigo:70,nombre:"Germen tostado de trigo",calorias:381,proteinas:30.5,grasas:11.7,carbohidratos:50.1},
+            {codigo:71,nombre:"Harina panadera de, variedad(DNS)",calorias:347,proteinas:13.5,grasas:1.2,carbohidratos:73.3},
+            {codigo:72,nombre:"Harina panadera enriquecida de trigo",calorias:347,proteinas:13.5,grasas:1.2,carbohidratos:73.3},
+            {codigo:73,nombre:"Harina de trigo, variedad (HAD)",calorias:339,proteinas:14,grasas:2.8,carbohidratos:68.8},
+            {codigo:74,nombre:"Harina galletera de trigo, variedad (SRW)",calorias:349,proteinas:9.3,grasas:1.2,carbohidratos:78.4},
+            {codigo:75,nombre:"Salvado de trigo (cereal)",calorias:347,proteinas:14.5,grasas:2.8,carbohidratos:72.6},
             {codigo:76,nombre:"Gallina, carne de",calorias:240,proteinas:18.5,grasas:18.4,carbohidratos:0},
             {codigo:77,nombre:"Paloma, carne de",calorias:273,proteinas:18.6,grasas:22.1,carbohidratos:0},
             {codigo:78,nombre:"Pato, carne de",calorias:321,proteinas:16,grasas:28.6,carbohidratos:0},
@@ -1496,64 +1368,560 @@
             {codigo:83,nombre:"Pollo, alas de, sin piel",calorias:120,proteinas:22,grasas:3.5,carbohidratos:0},
             {codigo:84,nombre:"Pollo, bologna de",calorias:254,proteinas:13.2,grasas:18.3,carbohidratos:9.1},
             {codigo:85,nombre:"Pollo, carne de",calorias:183,proteinas:20.2,grasas:11.4,carbohidratos:0},
+            {codigo:86,nombre:"Pollo, carne de, enlatada",calorias:168,proteinas:9.6,grasas:8.2,carbohidratos:14},
+            {codigo:87,nombre:"Pollo, guisado enlatado",calorias:141,proteinas:10.3,grasas:6.3,carbohidratos:10.7},
+            {codigo:88,nombre:"Pollo, higado de",calorias:157,proteinas:17.9,grasas:7.3,carbohidratos:5},
+            {codigo:89,nombre:"Pollo, jamon de, estandar",calorias:95,proteinas:12.4,grasas:3.8,carbohidratos:2.7},
+            {codigo:90,nombre:"Pollo, jamon de, superior",calorias:118,proteinas:16.2,grasas:5.2,carbohidratos:1.5},
+            {codigo:91,nombre:"Pollo, molleja de",calorias:94,proteinas:18.1,grasas:1.2,carbohidratos:2.7},
+            {codigo:92,nombre:"Pollo, muslo de, con piel",calorias:182,proteinas:18.2,grasas:12.1,carbohidratos:0},
+            {codigo:93,nombre:"Pollo, muslo de, sin piel",calorias:115,proteinas:20.1,grasas:3.8,carbohidratos:0},
+            {codigo:94,nombre:"Pollo, pasta de",calorias:208,proteinas:13.4,grasas:14,carbohidratos:7.1},
             {codigo:95,nombre:"Pollo, pechuga de, cocida",calorias:143,proteinas:28.6,grasas:3.2,carbohidratos:0},
+            {codigo:96,nombre:"Pollo, pechuga de, estandar (charcuteria)",calorias:71,proteinas:14,grasas:0.8,carbohidratos:0.2},
+            {codigo:97,nombre:"Pollo, pechuga de, superior (charcuteria)",calorias:92,proteinas:19.9,grasas:0.8,carbohidratos:1.4},
+            {codigo:98,nombre:"Pollo, pechuga de, con piel",calorias:167,proteinas:20.9,grasas:9.3,carbohidratos:0},
             {codigo:99,nombre:"Pollo, pechuga de, sin piel",calorias:103,proteinas:23.1,grasas:1.2,carbohidratos:0},
+            {codigo:100,nombre:"Pollo, pierna de, con piel",calorias:156,proteinas:19.3,grasas:8.7,carbohidratos:0},
+            {codigo:101,nombre:"Pollo, pierna de, sin piel",calorias:113,proteinas:20.6,grasas:3.4,carbohidratos:0},
+            {codigo:102,nombre:"Pollo, Salchicha de, enlatada",calorias:185,proteinas:9.9,grasas:13.3,carbohidratos:6.3},
+            {codigo:104,nombre:"Carne de cerdo, jamonizada enlatada",calorias:129,proteinas:11.1,grasas:5.7,carbohidratos:8.3},
+            {codigo:105,nombre:"Costilla de cerdo",calorias:295,proteinas:16.5,grasas:25.4,carbohidratos:0},
+            {codigo:106,nombre:"Chuleta de Cerdo",calorias:250,proteinas:18.3,grasas:19.6,carbohidratos:0},
+            {codigo:107,nombre:"Chuleta de cerdo, magra",calorias:111,proteinas:22.9,grasas:2.2,carbohidratos:0},
+            {codigo:108,nombre:"Chuleta de cerdo, ahumada",calorias:201,proteinas:25.2,grasas:11.1,carbohidratos:0},
+            {codigo:109,nombre:"Lomo de cerdo",calorias:192,proteinas:19.5,grasas:12.7,carbohidratos:0},
+            {codigo:110,nombre:"Lomo de cerdo, magro",calorias:121,proteinas:24.4,grasas:2.6,carbohidratos:0},
+            {codigo:111,nombre:"Paleta de cerdo",calorias:219,proteinas:18,grasas:16.3,carbohidratos:0},
+            {codigo:112,nombre:"Paleta de cerdo, magra",calorias:102,proteinas:21.1,grasas:2,carbohidratos:0},
+            {codigo:113,nombre:"Pernil de cerdo",calorias:158,proteinas:19.2,grasas:9,carbohidratos:0},
+            {codigo:114,nombre:"Pernil de cerdo, magro",calorias:120,proteinas:21.4,grasas:3.8,carbohidratos:0},
+            {codigo:115,nombre:"Chicharron de cerdo",calorias:646,proteinas:20.9,grasas:62.5,carbohidratos:0},
+            {codigo:116,nombre:"Higado de cerdo",calorias:134,proteinas:20,grasas:4.7,carbohidratos:3},
+            {codigo:117,nombre:"Jamon ahumado de cerdo, semi gordo",calorias:360,proteinas:17.7,grasas:31.8,carbohidratos:0.7},
+            {codigo:118,nombre:"Jamon cocido de cerdo, estandar",calorias:94,proteinas:13.2,grasas:3.9,carbohidratos:1.6},
+            {codigo:119,nombre:"Jamon cocido de cerdo, superior",calorias:106,proteinas:16.6,grasas:4.4,carbohidratos:0},
+            {codigo:120,nombre:"Jamon endiablado, enlatado",calorias:301,proteinas:12.9,grasas:26.7,carbohidratos:2.3},
+            {codigo:121,nombre:"Jamon de espalda",calorias:116,proteinas:13.1,grasas:6.1,carbohidratos:2.1},
+            {codigo:122,nombre:"Jamon serrano, sin hueso",calorias:175,proteinas:35.4,grasas:3.4,carbohidratos:0.6},
+            {codigo:123,nombre:"Pasta endiablada enlatada",calorias:288,proteinas:13.5,grasas:24.3,carbohidratos:3.7},
+            {codigo:124,nombre:"Salchicha de cerdo enlatada",calorias:119,proteinas:6.5,grasas:7,carbohidratos:7.4},
+            {codigo:125,nombre:"Salchicha de cerdo y res, sin piel",calorias:202,proteinas:7.6,grasas:16,carbohidratos:7},
+            {codigo:126,nombre:"Tocineta cruda",calorias:628,proteinas:9.1,grasas:65,carbohidratos:1.6},
+            {codigo:127,nombre:"Tocineta frita",calorias:599,proteinas:25,grasas:55,carbohidratos:1},
+            {codigo:128,nombre:"Conejo, carne de",calorias:151,proteinas:20.3,grasas:7.7,carbohidratos:0},
+            {codigo:129,nombre:"Cordero",calorias:247,proteinas:18.2,grasas:19.4,carbohidratos:0},
+            {codigo:131,nombre:"Carne de chiguire",calorias:80,proteinas:18.4,grasas:0.7,carbohidratos:0},
+            {codigo:132,nombre:"Carne seca de chiguire",calorias:153,proteinas:33.9,grasas:0.6,carbohidratos:2.9},
+            {codigo:133,nombre:"Chivo, carne de",calorias:159,proteinas:18.7,grasas:9.4,carbohidratos:0},
+            {codigo:134,nombre:"Iguana, carne de",calorias:106,proteinas:24.4,grasas:0.9,carbohidratos:0},
+            {codigo:135,nombre:"Ternera, carne de",calorias:122,proteinas:19.3,grasas:5,carbohidratos:0},
+            {codigo:136,nombre:"Venado, carne de",calorias:134,proteinas:31.4,grasas:0.9,carbohidratos:0},
+            {codigo:137,nombre:"Tipo bologna",calorias:207,proteinas:15.6,grasas:15.1,carbohidratos:2.2},
+            {codigo:138,nombre:"Tipo chorizo",calorias:273,proteinas:15.8,grasas:22.8,carbohidratos:1.1},
+            {codigo:139,nombre:"Tipo chorizo carupanero",calorias:370,proteinas:16.6,grasas:33.5,carbohidratos:0.4},
+            {codigo:140,nombre:"Tipo chorizo cocido",calorias:367,proteinas:19.5,grasas:30.6,carbohidratos:3.4},
+            {codigo:141,nombre:"Tipo chorizo espanol",calorias:379,proteinas:25.7,grasas:21.9,carbohidratos:1.2},
+            {codigo:142,nombre:"Tipo chorizo hungaro",calorias:305,proteinas:19.5,grasas:23.7,carbohidratos:3.4},
+            {codigo:143,nombre:"Tipo frankfurter, cocido",calorias:244,proteinas:14,grasas:20,carbohidratos:2},
+            {codigo:144,nombre:"Tipo morcilla alemana",calorias:292,proteinas:18.6,grasas:22.7,carbohidratos:3.2},
+            {codigo:145,nombre:"Tipo morcilla con arroz y cebolla",calorias:280,proteinas:9.8,grasas:22.2,carbohidratos:10.2},
+            {codigo:146,nombre:"Tipo morcilla condimentada",calorias:197,proteinas:15,grasas:12.6,carbohidratos:6},
+            {codigo:147,nombre:"Tipo mortadela economica",calorias:324,proteinas:13,grasas:27.2,carbohidratos:6.7},
+            {codigo:148,nombre:"Tipo mortadela especial",calorias:237,proteinas:15.6,grasas:16.9,carbohidratos:5.7},
+            {codigo:149,nombre:"Tipo mortadela extra",calorias:312,proteinas:12.8,grasas:27.1,carbohidratos:4.1},
+            {codigo:150,nombre:"Tipo pasta de higado",calorias:268,proteinas:16.8,grasas:21.6,carbohidratos:1.7},
+            {codigo:151,nombre:"Tipo salchicha de cerdo",calorias:448,proteinas:10.8,grasas:44.8,carbohidratos:0.4},
+            {codigo:152,nombre:"Tipo salchicha (pero caliente)",calorias:206,proteinas:13.8,grasas:15.5,carbohidratos:2.2},
+            {codigo:153,nombre:"Tipo salchicha (viena)",calorias:211,proteinas:15.8,grasas:16.4,carbohidratos:0},
+            {codigo:154,nombre:"Tipo salchichon",calorias:460,proteinas:27.3,grasas:38.2,carbohidratos:1.8},
             {codigo:155,nombre:"Carne molida (res)",calorias:201,proteinas:18.2,grasas:14.2,carbohidratos:0},
             {codigo:156,nombre:"Chocozuela (res)",calorias:100,proteinas:22.3,grasas:1.2,carbohidratos:0},
+            {codigo:157,nombre:"Falda (res)",calorias:91,proteinas:20.6,grasas:0.9,carbohidratos:0},
+            {codigo:158,nombre:"Ganso (res)",calorias:91,proteinas:21.3,grasas:0.6,carbohidratos:0},
+            {codigo:159,nombre:"Lagarto (res)",calorias:84,proteinas:20.5,grasas:0.2,carbohidratos:0},
+            {codigo:160,nombre:"Lomito (res)",calorias:91,proteinas:18.7,grasas:1.8,carbohidratos:0},
+            {codigo:161,nombre:"Muchacho redondo (res)",calorias:98,proteinas:21.8,grasas:1.2,carbohidratos:0},
+            {codigo:162,nombre:"Papelon (res)",calorias:89,proteinas:19.8,grasas:1.1,carbohidratos:0},
+            {codigo:163,nombre:"Pollo (res)",calorias:89,proteinas:21,grasas:0.6,carbohidratos:0},
+            {codigo:164,nombre:"Pulpa Negra (res)",calorias:104,proteinas:21.6,grasas:1.9,carbohidratos:0},
+            {codigo:165,nombre:"Punta trasera (res)",calorias:111,proteinas:21.7,grasas:2.7,carbohidratos:0},
             {codigo:166,nombre:"Solomo (res)",calorias:98,proteinas:23.2,grasas:0.6,carbohidratos:0},
+            {codigo:167,nombre:"Carne de almuerzo enlatada",calorias:220,proteinas:11.5,grasas:14.8,carbohidratos:10.2},
+            {codigo:168,nombre:"Carne de almuerzo, de res y cerdo",calorias:188,proteinas:10.6,grasas:10.5,carbohidratos:12.7},
+            {codigo:169,nombre:"Carne de buey enlatada",calorias:158,proteinas:11,grasas:7.6,carbohidratos:11.5},
+            {codigo:170,nombre:"Carne mechada enlatada",calorias:162,proteinas:13.2,grasas:9.1,carbohidratos:6.9},
+            {codigo:171,nombre:"Carne mechada con soya enlatada",calorias:158,proteinas:13.4,grasas:9.5,carbohidratos:4.7},
+            {codigo:172,nombre:"Carne mechada, tipo argentino",calorias:137,proteinas:14.6,grasas:7.2,carbohidratos:5.8},
+            {codigo:173,nombre:"Salchicha (res) tipo frankfurter",calorias:230,proteinas:9.3,grasas:19.4,carbohidratos:4.6},
+            {codigo:174,nombre:"Corazon (visceras)",calorias:113,proteinas:16.8,grasas:4.9,carbohidratos:0.5},
+            {codigo:175,nombre:"Higado (visceras)",calorias:128,proteinas:19.3,grasas:3.8,carbohidratos:4.1},
+            {codigo:176,nombre:"Lengua (visceras)",calorias:193,proteinas:18.4,grasas:12.3,carbohidratos:2.1},
+            {codigo:177,nombre:"Panza (visceras)",calorias:104,proteinas:15,grasas:3.8,carbohidratos:2.4},
+            {codigo:178,nombre:"rinon (visceras)",calorias:129,proteinas:15,grasas:7.3,carbohidratos:0.9},
+            {codigo:179,nombre:"Sesos (visceras)",calorias:129,proteinas:10.4,grasas:9.6,carbohidratos:0.2},
+            {codigo:180,nombre:"Ubre (visceras)",calorias:195,proteinas:15.4,grasas:11.7,carbohidratos:7},
+            {codigo:181,nombre:"Anchova (pescado)",calorias:134,proteinas:21,grasas:5.5,carbohidratos:0},
+            {codigo:182,nombre:"Anchova frita (pescado)",calorias:192,proteinas:25,grasas:10.2,carbohidratos:0},
+            {codigo:183,nombre:"Anchova sancochada (pescado)",calorias:171,proteinas:23.4,grasas:8.6,carbohidratos:0},
+            {codigo:184,nombre:"Arenque aumado (pescado)",calorias:293,proteinas:24.3,grasas:21.8,carbohidratos:0},
             {codigo:185,nombre:"Atun",calorias:111,proteinas:26.1,grasas:0.7,carbohidratos:0},
             {codigo:186,nombre:"Atun natural enlatado, escurrido",calorias:96,proteinas:23.2,grasas:0.4,carbohidratos:0},
+            {codigo:187,nombre:"Atun en aceite enlatado, escurrido",calorias:167,proteinas:29,grasas:5.7,carbohidratos:0},
+            {codigo:188,nombre:"Bacalao (pescado)",calorias:73,proteinas:17.5,grasas:0.3,carbohidratos:0},
+            {codigo:189,nombre:"Bacalao seco salado (pescado)",calorias:341,proteinas:78.9,grasas:2.8,carbohidratos:0},
+            {codigo:190,nombre:"Bonito (pescado)",calorias:134,proteinas:24.4,grasas:4,carbohidratos:0},
+            {codigo:191,nombre:"Bonito frita (pescado)",calorias:224,proteinas:31.8,grasas:10.8,carbohidratos:0},
+            {codigo:192,nombre:"Bonito sancochado (pescado)",calorias:163,proteinas:29,grasas:5.2,carbohidratos:0},
+            {codigo:193,nombre:"Buco o curito cocido (pescado)",calorias:141,proteinas:24.1,grasas:4.9,carbohidratos:0},
+            {codigo:194,nombre:"Caballa (pescado)",calorias:159,proteinas:21.3,grasas:8.2,carbohidratos:0},
+            {codigo:195,nombre:"Cachama (pescado)",calorias:82,proteinas:18.7,grasas:0.8,carbohidratos:0},
+            {codigo:196,nombre:"Cachicato (pescado)",calorias:90,proteinas:21.2,grasas:0.6,carbohidratos:0},
+            {codigo:197,nombre:"Carite (pescado)",calorias:90,proteinas:21.1,grasas:0.6,carbohidratos:0},
+            {codigo:198,nombre:"Carpa (pescado)",calorias:92,proteinas:16,grasas:3.1,carbohidratos:0},
+            {codigo:199,nombre:"Cazon (pescado)",calorias:103,proteinas:25.4,grasas:0.2,carbohidratos:0},
+            {codigo:200,nombre:"Coporo (pescado)",calorias:126,proteinas:25.1,grasas:2.8,carbohidratos:0},
+            {codigo:201,nombre:"Corocoro (pescado)",calorias:93,proteinas:19.7,grasas:1.6,carbohidratos:0},
+            {codigo:202,nombre:"orocoro frito (pescado)",calorias:163,proteinas:25.1,grasas:7,carbohidratos:0},
+            {codigo:203,nombre:"Corocoro sancochado (pescado)",calorias:110,proteinas:23.1,grasas:1.9,carbohidratos:0},
+            {codigo:204,nombre:"Corvina (pescado)",calorias:94,proteinas:20.8,grasas:1.2,carbohidratos:0},
+            {codigo:205,nombre:"Chicharro (pescado)",calorias:102,proteinas:21.3,grasas:1.9,carbohidratos:0},
+            {codigo:206,nombre:"Chicharro frito (pescado)",calorias:249,proteinas:33,grasas:13,carbohidratos:0},
+            {codigo:207,nombre:"Chicharro sancochado (pescado)",calorias:116,proteinas:25.4,grasas:1.6,carbohidratos:0},
+            {codigo:208,nombre:"Jurel (pescado)",calorias:112,proteinas:22,grasas:2.7,carbohidratos:0},
+            {codigo:209,nombre:"Jurel frito (pescado)",calorias:205,proteinas:33.1,grasas:8.1,carbohidratos:0},
+            {codigo:210,nombre:"Jurel sancochado (pescado)",calorias:133,proteinas:28.7,grasas:2,carbohidratos:0},
+            {codigo:211,nombre:"Lamparosa (pescado)",calorias:97,proteinas:20.2,grasas:1.8,carbohidratos:0},
+            {codigo:212,nombre:"Lamparosa frita (pescado)",calorias:218,proteinas:29.6,grasas:11.1,carbohidratos:0},
+            {codigo:213,nombre:"Lamparosa sancochada (pescado)",calorias:104,proteinas:22.7,grasas:1.5,carbohidratos:0},
+            {codigo:214,nombre:"Lebranche (pescado)",calorias:142,proteinas:19.3,grasas:7.2,carbohidratos:0},
+            {codigo:215,nombre:"Lebranche frito (pescado)",calorias:188,proteinas:25.5,grasas:9.6,carbohidratos:0},
+            {codigo:216,nombre:"Lebranche sancochado (pescado)",calorias:138,proteinas:20.2,grasas:6.4,carbohidratos:0},
+            {codigo:217,nombre:"Lenguado (pescado)",calorias:85,proteinas:20.3,grasas:0.4,carbohidratos:0},
+            {codigo:218,nombre:"Loro (pescado)",calorias:81,proteinas:18.9,grasas:0.6,carbohidratos:0},
+            {codigo:219,nombre:"Merluza (pescado)",calorias:91,proteinas:20.5,grasas:1,carbohidratos:0},
+            {codigo:220,nombre:"Mero (pescado)",calorias:89,proteinas:19.4,grasas:1.3,carbohidratos:0},
+            {codigo:221,nombre:"Mojarra (pescado)",calorias:85,proteinas:18.6,grasas:1.2,carbohidratos:0},
+            {codigo:222,nombre:"Pampano (pescado)",calorias:92,proteinas:19.6,grasas:1.4,carbohidratos:0},
+            {codigo:223,nombre:"Pargo (pescado)",calorias:77,proteinas:18.2,grasas:0.5,carbohidratos:0},
+            {codigo:224,nombre:"Perla de mar (pescado)",calorias:74,proteinas:17.7,grasas:0.3,carbohidratos:0},
+            {codigo:225,nombre:"Picua (pescado)",calorias:94,proteinas:20.9,grasas:1.2,carbohidratos:0},
+            {codigo:226,nombre:"Rayado (pescado)",calorias:84,proteinas:19.2,grasas:0.8,carbohidratos:0},
+            {codigo:227,nombre:"Rayado sancochado (pescado)",calorias:106,proteinas:24.8,grasas:0.7,carbohidratos:0},
+            {codigo:228,nombre:"Robalo (pescado)",calorias:102,proteinas:21.1,grasas:1.9,carbohidratos:0},
+            {codigo:229,nombre:"Robalo frito (pescado)",calorias:156,proteinas:28.7,grasas:4.6,carbohidratos:0},
+            {codigo:230,nombre:"Robalo sancochado (pescado)",calorias:107,proteinas:23.2,grasas:1.6,carbohidratos:0},
+            {codigo:231,nombre:"Roncador (pescado)",calorias:82,proteinas:19.3,grasas:0.5,carbohidratos:0},
+            {codigo:232,nombre:"Salmon enlatado (pescado)",calorias:145,proteinas:19.7,grasas:7.3,carbohidratos:0},
             {codigo:233,nombre:"Sardinas",calorias:145,proteinas:20.6,grasas:7,carbohidratos:0},
+            {codigo:234,nombre:"Sardinas enlatadas (parte solida)",calorias:183,proteinas:24.9,grasas:9.3,carbohidratos:0},
+            {codigo:235,nombre:"Sierra (pescado)",calorias:119,proteinas:23,grasas:3,carbohidratos:0},
+            {codigo:236,nombre:"Sierra frita (pescado)",calorias:189,proteinas:30,grasas:7.7,carbohidratos:0},
+            {codigo:237,nombre:"Sierra sancochada (pescado)",calorias:131,proteinas:25.3,grasas:3.3,carbohidratos:0},
+            {codigo:238,nombre:"Tajali (pescado)",calorias:98,proteinas:19.3,grasas:2.3,carbohidratos:0},
+            {codigo:239,nombre:"Tajali frito (pescado)",calorias:212,proteinas:29,grasas:10.7,carbohidratos:0},
+            {codigo:240,nombre:"Tajali sancochado (pescado)",calorias:11,proteinas:22.9,grasas:2.2,carbohidratos:0},
+            {codigo:241,nombre:"Trucha arcoiris",calorias:103,proteinas:19.5,grasas:2.7,carbohidratos:0},
+            {codigo:242,nombre:"Trucha de mar",calorias:74,proteinas:17.9,grasas:0.3,carbohidratos:0},
+            {codigo:243,nombre:"Almejas",calorias:73,proteinas:12.6,grasas:1.6,carbohidratos:2},
+            {codigo:244,nombre:"Calamares",calorias:80,proteinas:16.8,grasas:1.4,carbohidratos:0},
             {codigo:245,nombre:"Camarones",calorias:91,proteinas:19.7,grasas:1.3,carbohidratos:0},
+            {codigo:246,nombre:"Cangrejos enlatados",calorias:97,proteinas:17.4,grasas:2.5,carbohidratos:1.1},
+            {codigo:247,nombre:"Chipi-Chipi cocidos",calorias:81,proteinas:17.4,grasas:0.8,carbohidratos:1},
+            {codigo:248,nombre:"Guacuco",calorias:121,proteinas:18.3,grasas:4.6,carbohidratos:1.7},
+            {codigo:249,nombre:"Langosta",calorias:84,proteinas:16.2,grasas:1.9,carbohidratos:0.5},
+            {codigo:250,nombre:"Langostinos",calorias:89,proteinas:20.3,grasas:0.9,carbohidratos:0},
+            {codigo:251,nombre:"Mejillones enlatados",calorias:104,proteinas:17.2,grasas:3.3,carbohidratos:1.3},
+            {codigo:252,nombre:"Ostras",calorias:42,proteinas:5.8,grasas:0.5,carbohidratos:3.5},
+            {codigo:253,nombre:"Pepitonas enlatadas",calorias:88,proteinas:16.8,grasas:1.2,carbohidratos:2.4},
+            {codigo:254,nombre:"Pulpo",calorias:64,proteinas:14.2,grasas:0.6,carbohidratos:0.4},
+            {codigo:255,nombre:"Codorniz, Gallina, huevo de",calorias:179,proteinas:11.6,grasas:13.1,carbohidratos:3.6},
             {codigo:256,nombre:"Gallina, huevo entero",calorias:156,proteinas:12.4,grasas:11.1,carbohidratos:1.5},
             {codigo:257,nombre:"Gallina, clara de huevo",calorias:46,proteinas:10.8,grasas:0.2,carbohidratos:0.6},
             {codigo:258,nombre:"Gallina, yema de huevo",calorias:354,proteinas:16.1,grasas:31.6,carbohidratos:1.2},
+            {codigo:259,nombre:"Gallina, huevo en polvo",calorias:576,proteinas:46.8,grasas:42,carbohidratos:2.6},
+            {codigo:260,nombre:"Iguana, huevo de",calorias:166,proteinas:16.2,grasas:10.4,carbohidratos:2},
+            {codigo:261,nombre:"Lisa, huevo de",calorias:367,proteinas:39.9,grasas:19,carbohidratos:9},
+            {codigo:262,nombre:"Tortuga, huevo de",calorias:111,proteinas:12.6,grasas:6.3,carbohidratos:0.9},
+            {codigo:263,nombre:"Leche de burra",calorias:44,proteinas:1.7,grasas:1.2,carbohidratos:6.5},
+            {codigo:264,nombre:"Leche de cabra",calorias:75,proteinas:4,grasas:4.8,carbohidratos:4},
+            {codigo:265,nombre:"Leche Humana",calorias:78,proteinas:1.1,grasas:4,carbohidratos:9.5},
+            {codigo:266,nombre:"Leche de soya",calorias:36,proteinas:3.4,grasas:1.5,carbohidratos:2.1},
             {codigo:267,nombre:"Leche liquida completa",calorias:63,proteinas:3.5,grasas:3.4,carbohidratos:4.7},
             {codigo:268,nombre:"Leche liquida descremada",calorias:43,proteinas:3.6,grasas:0.9,carbohidratos:5},
+            {codigo:269,nombre:"Leche en polvo completa, enriquecida",calorias:492,proteinas:25.8,grasas:26.7,carbohidratos:38},
+            {codigo:270,nombre:"Leche en polvo descremada",calorias:356,proteinas:35,grasas:1,carbohidratos:51.8},
+            {codigo:271,nombre:"Leche condensada",calorias:324,proteinas:8,grasas:8.7,carbohidratos:53.5},
+            {codigo:272,nombre:"Leche evaporada",calorias:138,proteinas:6.8,grasas:7.9,carbohidratos:9.8},
+            {codigo:273,nombre:"Crema de leche pasteurizada",calorias:382,proteinas:2,grasas:40.3,carbohidratos:2.9},
+            {codigo:274,nombre:"Cuajada",calorias:257,proteinas:15.5,grasas:18.9,carbohidratos:6.2},
             {codigo:275,nombre:"Mantequilla",calorias:731,proteinas:0.6,grasas:81,carbohidratos:0},
+            {codigo:276,nombre:"Nata",calorias:326,proteinas:2.5,grasas:32,carbohidratos:7.1},
+            {codigo:277,nombre:"Suero criollo pasteurizado",calorias:63,proteinas:3.1,grasas:3.3,carbohidratos:5.3},
+            {codigo:278,nombre:"Queso amarillo fundido, tipo americano",calorias:376,proteinas:22.4,grasas:31.2,carbohidratos:1.3},
+            {codigo:279,nombre:"Queso amarillo fundidio para untar",calorias:277,proteinas:12.7,grasas:21.9,carbohidratos:7.2},
+            {codigo:280,nombre:"Queso amarillo holandes",calorias:398,proteinas:26,grasas:32.1,carbohidratos:1.3},
+            {codigo:281,nombre:"Queso azul danes",calorias:337,proteinas:22.8,grasas:26.5,carbohidratos:1.9},
+            {codigo:282,nombre:"Queso blanco duro de leche complet.",calorias:389,proteinas:24.9,grasas:31.5,carbohidratos:1.4},
+            {codigo:283,nombre:"Queso blanco duro de leche descrem.",calorias:224,proteinas:38.2,grasas:5.7,carbohidratos:4.9},
+            {codigo:284,nombre:"Queso blanco duro de leche semidescre.",calorias:337,proteinas:34,grasas:21,carbohidratos:3},
+            {codigo:285,nombre:"Queso fundidio para untar",calorias:304,proteinas:12.3,grasas:26.5,carbohidratos:4.1},
             {codigo:286,nombre:"Queso blanco suave",calorias:313,proteinas:18.3,grasas:26.3,carbohidratos:0.8},
+            {codigo:287,nombre:"Queso Cheddar",calorias:398,proteinas:25,grasas:32.2,carbohidratos:2.1},
+            {codigo:288,nombre:"Queso de ano",calorias:402,proteinas:24.3,grasas:32.8,carbohidratos:2.4},
+            {codigo:289,nombre:"Queso de cabra",calorias:172,proteinas:16,grasas:10.3,carbohidratos:3.7},
+            {codigo:290,nombre:"Queso de crema (cream chesse)",calorias:377,proteinas:9,grasas:37,carbohidratos:2},
+            {codigo:291,nombre:"Queso de mano (29)",calorias:316,proteinas:19.3,grasas:24.8,carbohidratos:4},
+            {codigo:292,nombre:"Queso gouda",calorias:355,proteinas:24.9,grasas:27.4,carbohidratos:2.3},
+            {codigo:293,nombre:"Queso guayanes",calorias:284,proteinas:18.8,grasas:23,carbohidratos:0.4},
+            {codigo:294,nombre:"Queso gruyere",calorias:404,proteinas:28.8,grasas:31.8,carbohidratos:0.6},
             {codigo:295,nombre:"Queso mozzarela",calorias:230,proteinas:19.9,grasas:16.1,carbohidratos:1.3},
+            {codigo:296,nombre:"Queso muenster",calorias:363,proteinas:24.2,grasas:28.5,carbohidratos:2.4},
+            {codigo:297,nombre:"Queso parmesano",calorias:391,proteinas:40.8,grasas:24.7,carbohidratos:1.3},
+            {codigo:298,nombre:"Requeson",calorias:161,proteinas:13.4,grasas:10.8,carbohidratos:2.6},
+            {codigo:299,nombre:"Queso roquefort",calorias:423,proteinas:22.2,grasas:36.6,carbohidratos:1.1},
+            {codigo:300,nombre:"Pasta para untar con sabor a queso",calorias:323,proteinas:7.2,grasas:28.6,carbohidratos:9.2},
+            {codigo:301,nombre:"Yoghurt de leche completa y frutas",calorias:114,proteinas:3.6,grasas:3.2,carbohidratos:17.7},
+            {codigo:302,nombre:"Dulce de leche completa",calorias:92,proteinas:4.2,grasas:3.6,carbohidratos:10.8},
+            {codigo:303,nombre:"Yoghurt liquido de leche semidescrem c/frutas",calorias:63,proteinas:4.9,grasas:1.5,carbohidratos:7.4},
+            {codigo:304,nombre:"Yoghurt liqu. De leche descrem. C/frutas",calorias:55,proteinas:4.3,grasas:0.7,carbohidratos:7.8},
             {codigo:305,nombre:"Yoghurt natural de leche completa",calorias:74,proteinas:4.3,grasas:3.8,carbohidratos:5.7},
+            {codigo:306,nombre:"Yoghurt natural de leche descremad.",calorias:51,proteinas:4.6,grasas:0.6,carbohidratos:6.9},
+            {codigo:307,nombre:"Arvejas secas",calorias:271,proteinas:23.2,grasas:1.4,carbohidratos:60.7},
+            {codigo:308,nombre:"Arvejas secas cocidas",calorias:86,proteinas:7.4,grasas:0.3,carbohidratos:19},
+            {codigo:309,nombre:"Arvejas tiernas",calorias:94,proteinas:7.8,grasas:0.5,carbohidratos:21.7},
+            {codigo:310,nombre:"Arvejas Tiernas enlatadas",calorias:67,proteinas:4.7,grasas:0.3,carbohidratos:15.7},
+            {codigo:311,nombre:"Caraotas blancas",calorias:233,proteinas:23.9,grasas:1.5,carbohidratos:59.7},
+            {codigo:312,nombre:"Caraotas blancas cocidas",calorias:84,proteinas:8,grasas:0.5,carbohidratos:19.5},
+            {codigo:313,nombre:"Caraotas blancas enlatadas",calorias:73,proteinas:6.3,grasas:0.5,carbohidratos:17.9},
             {codigo:314,nombre:"Caraotas negras",calorias:248,proteinas:23,grasas:1.6,carbohidratos:59.3},
             {codigo:315,nombre:"Caraotas negras cocidas",calorias:82,proteinas:8.5,grasas:0.3,carbohidratos:21},
+            {codigo:316,nombre:"caraotas negras enlatadas",calorias:66,proteinas:5.4,grasas:1.5,carbohidratos:15},
+            {codigo:317,nombre:"Caraotas rojas",calorias:251,proteinas:20.9,grasas:2,carbohidratos:60.4},
+            {codigo:318,nombre:"Caraotas rojas cocidas",calorias:91,proteinas:8.6,grasas:0.5,carbohidratos:21.1},
+            {codigo:319,nombre:"Caraotas rojas enlatadas",calorias:88,proteinas:6.8,grasas:0.7,carbohidratos:21.4},
+            {codigo:320,nombre:"Cuarentano",calorias:322,proteinas:24.1,grasas:1.3,carbohidratos:57.4},
+            {codigo:321,nombre:"Frijol",calorias:257,proteinas:26.7,grasas:0.9,carbohidratos:57.4},
+            {codigo:322,nombre:"Frijol cocido",calorias:92,proteinas:8.2,grasas:0.4,carbohidratos:21.3},
+            {codigo:323,nombre:"Gallinazo",calorias:311,proteinas:22.1,grasas:1,carbohidratos:61.2},
             {codigo:324,nombre:"Garbanzos",calorias:310,proteinas:20,grasas:4.6,carbohidratos:60},
+            {codigo:325,nombre:"Garbanzos cocidas",calorias:113,proteinas:9.5,grasas:1.8,carbohidratos:22.8},
+            {codigo:326,nombre:"Guaracaro",calorias:324,proteinas:21.2,grasas:1.5,carbohidratos:60.9},
+            {codigo:327,nombre:"Habas blancas",calorias:267,proteinas:25.5,grasas:1.3,carbohidratos:57},
+            {codigo:328,nombre:"Habas rojas",calorias:273,proteinas:25.5,grasas:1.6,carbohidratos:57.7},
+            {codigo:329,nombre:"Habas verdes",calorias:111,proteinas:9.3,grasas:0.5,carbohidratos:24.7},
             {codigo:330,nombre:"Lentejas",calorias:252,proteinas:23.9,grasas:0.9,carbohidratos:59.7},
             {codigo:331,nombre:"Lentejas cocidas",calorias:65,proteinas:6.8,grasas:0.3,carbohidratos:13.2},
+            {codigo:332,nombre:"Quinchoncho seco",calorias:250,proteinas:20.9,grasas:1,carbohidratos:63.1},
+            {codigo:333,nombre:"Quinchoncho seco cocido",calorias:98,proteinas:8.2,grasas:0.5,carbohidratos:24},
+            {codigo:334,nombre:"Quinchoncho tierno",calorias:121,proteinas:8.4,grasas:1,carbohidratos:23.2},
+            {codigo:335,nombre:"Soya, grano entero",calorias:412,proteinas:33.4,grasas:16.1,carbohidratos:38.3},
+            {codigo:336,nombre:"Soya, harina de",calorias:442,proteinas:35.4,grasas:20.1,carbohidratos:32.2},
+            {codigo:337,nombre:"Soya, harina desgrasada de",calorias:335,proteinas:52,grasas:0.8,carbohidratos:32.7},
+            {codigo:338,nombre:"Apio",calorias:94,proteinas:1,grasas:0.1,carbohidratos:24.3},
+            {codigo:339,nombre:"Apio cocido",calorias:88,proteinas:0.6,grasas:0.5,carbohidratos:21.9},
+            {codigo:340,nombre:"Batata",calorias:108,proteinas:1.5,grasas:0.4,carbohidratos:28.5},
+            {codigo:341,nombre:"Batata cocida",calorias:83,proteinas:1.9,grasas:0.1,carbohidratos:20.9},
+            {codigo:342,nombre:"Mapuey blanco",calorias:90,proteinas:1.4,grasas:0.2,carbohidratos:21.9},
+            {codigo:343,nombre:"Mapuey morado",calorias:112,proteinas:1.2,grasas:0.6,carbohidratos:27.4},
+            {codigo:344,nombre:"Name",calorias:98,proteinas:2.1,grasas:0.2,carbohidratos:23.4},
+            {codigo:345,nombre:"Name cocido",calorias:88,proteinas:1.7,grasas:0.1,carbohidratos:21.7},
+            {codigo:346,nombre:"Ocumo",calorias:103,proteinas:1.7,grasas:0.8,carbohidratos:24.4},
+            {codigo:347,nombre:"Ocumo cocido",calorias:101,proteinas:1,grasas:0.2,carbohidratos:26.1},
+            {codigo:348,nombre:"Ocumo chino",calorias:156,proteinas:1.2,grasas:0.2,carbohidratos:40.9},
             {codigo:349,nombre:"Papa",calorias:81,proteinas:2,grasas:0.1,carbohidratos:19.5},
             {codigo:350,nombre:"Papa cocida",calorias:68,proteinas:2,grasas:0.1,carbohidratos:16.1},
+            {codigo:351,nombre:"Papa morada",calorias:80,proteinas:2.1,grasas:0.3,carbohidratos:18.3},
             {codigo:352,nombre:"Yuca",calorias:143,proteinas:1.1,grasas:0.2,carbohidratos:36.5},
             {codigo:353,nombre:"Yuca cocida",calorias:129,proteinas:0.8,grasas:0.2,carbohidratos:33.3},
+            {codigo:354,nombre:"Acelga",calorias:19,proteinas:2,grasas:0.2,carbohidratos:5.8},
             {codigo:355,nombre:"Aguacate",calorias:152,proteinas:1.3,grasas:14,carbohidratos:8},
+            {codigo:356,nombre:"Aji chile picante",calorias:41,proteinas:1.2,grasas:0.2,carbohidratos:9.7},
+            {codigo:357,nombre:"Aji dulce sin clasificar",calorias:46,proteinas:1.9,grasas:0.6,carbohidratos:10.2},
+            {codigo:358,nombre:"Aji rojo picante",calorias:63,proteinas:2.2,grasas:1.6,carbohidratos:14.1},
             {codigo:359,nombre:"Ajo",calorias:129,proteinas:5.1,grasas:0.2,carbohidratos:27.8},
+            {codigo:360,nombre:"Ajoporro",calorias:36,proteinas:1.5,grasas:0.1,carbohidratos:11.4},
+            {codigo:361,nombre:"Alcachofa",calorias:25,proteinas:2.8,grasas:0.2,carbohidratos:9.1},
+            {codigo:362,nombre:"Apio espana (celery)",calorias:16,proteinas:0.9,grasas:0.1,carbohidratos:4.3},
             {codigo:363,nombre:"Auyama",calorias:43,proteinas:1.5,grasas:0.4,carbohidratos:9.7},
+            {codigo:364,nombre:"Auyama cocida",calorias:27,proteinas:0.8,grasas:0.2,carbohidratos:6.7},
+            {codigo:365,nombre:"Berenjena",calorias:18,proteinas:1,grasas:0.3,carbohidratos:5.5},
+            {codigo:366,nombre:"Berro",calorias:18,proteinas:2.2,grasas:0.4,carbohidratos:4.5},
             {codigo:367,nombre:"Brocoli",calorias:27,proteinas:3.8,grasas:0.4,carbohidratos:6.5},
+            {codigo:368,nombre:"Calabacin",calorias:11,proteinas:1.2,grasas:0.2,carbohidratos:1.9},
             {codigo:369,nombre:"Cebolla",calorias:43,proteinas:1.4,grasas:0.2,carbohidratos:11.1},
+            {codigo:370,nombre:"Coliflor",calorias:19,proteinas:2.5,grasas:0.2,carbohidratos:5.9},
+            {codigo:371,nombre:"Colinabo",calorias:31,proteinas:2,grasas:0.1,carbohidratos:6.4},
+            {codigo:372,nombre:"Chayota",calorias:25,proteinas:0.7,grasas:0.2,carbohidratos:6.7},
+            {codigo:373,nombre:"Escarola",calorias:14,proteinas:1.4,grasas:0.2,carbohidratos:4.5},
+            {codigo:374,nombre:"Esparrago",calorias:23,proteinas:2.2,grasas:0.2,carbohidratos:4.6},
+            {codigo:375,nombre:"Esparrago enlatado",calorias:25,proteinas:2.4,grasas:0.4,carbohidratos:4.2},
             {codigo:376,nombre:"Espinaca",calorias:17,proteinas:2.3,grasas:0.3,carbohidratos:3.8},
+            {codigo:377,nombre:"Hongos",calorias:26,proteinas:2.7,grasas:0.2,carbohidratos:5.4},
+            {codigo:378,nombre:"Hongos enlatados",calorias:25,proteinas:2.3,grasas:0.5,carbohidratos:4.9},
+            {codigo:379,nombre:"Lairen",calorias:45,proteinas:0.5,grasas:0.8,carbohidratos:9.7},
             {codigo:380,nombre:"Lechuga",calorias:10,proteinas:1.2,grasas:0.2,carbohidratos:3.5},
+            {codigo:381,nombre:"Nabo blanco",calorias:25,proteinas:1.1,grasas:0.1,carbohidratos:5.8},
+            {codigo:382,nombre:"Palmito",calorias:41,proteinas:1.6,grasas:0.2,carbohidratos:13.9},
+            {codigo:383,nombre:"Pepino",calorias:13,proteinas:0.7,grasas:0.1,carbohidratos:3.2},
+            {codigo:384,nombre:"Perejil",calorias:37,proteinas:4,grasas:0.8,carbohidratos:9.4},
+            {codigo:385,nombre:"Pimenton Rojo",calorias:20,proteinas:0.8,grasas:0.2,carbohidratos:6.2},
+            {codigo:386,nombre:"Pimenton verde",calorias:19,proteinas:0.9,grasas:0.1,carbohidratos:5.9},
+            {codigo:387,nombre:"Quimbombo",calorias:34,proteinas:2.4,grasas:0.3,carbohidratos:6.5},
+            {codigo:388,nombre:"Rabano",calorias:15,proteinas:1,grasas:0.1,carbohidratos:4.1},
+            {codigo:389,nombre:"Remolacha",calorias:35,proteinas:1.4,grasas:0.2,carbohidratos:10.4},
+            {codigo:390,nombre:"Remolacha enlatada",calorias:28,proteinas:1,grasas:0.1,carbohidratos:8.2},
+            {codigo:391,nombre:"Repollito de bruselas",calorias:40,proteinas:4.7,grasas:0.4,carbohidratos:9.6},
+            {codigo:392,nombre:"Repollo blanco",calorias:25,proteinas:1.4,grasas:0.2,carbohidratos:6.1},
+            {codigo:393,nombre:"Repollo morado",calorias:16,proteinas:1.8,grasas:0.3,carbohidratos:5},
+            {codigo:394,nombre:"Ruibarbo",calorias:17,proteinas:0.6,grasas:0.1,carbohidratos:4.2},
+            {codigo:395,nombre:"Tomate enlatado",calorias:10,proteinas:1.1,grasas:0.2,carbohidratos:3.2},
             {codigo:396,nombre:"Tomate manzano",calorias:15,proteinas:1.4,grasas:0.2,carbohidratos:3.2},
+            {codigo:397,nombre:"Tomate perita",calorias:17,proteinas:1.2,grasas:0.5,carbohidratos:3.2},
+            {codigo:398,nombre:"Vainita",calorias:31,proteinas:2.4,grasas:0.2,carbohidratos:9.1},
+            {codigo:399,nombre:"Vainitas enlatadas",calorias:13,proteinas:1.3,grasas:0.1,carbohidratos:4.3},
+            {codigo:400,nombre:"Vegetales mixtos enlatados",calorias:34,proteinas:2.6,grasas:0.3,carbohidratos:8.4},
             {codigo:401,nombre:"Zanahoria",calorias:32,proteinas:1,grasas:0.2,carbohidratos:8.7},
+            {codigo:402,nombre:"Zanahoria enlatada",calorias:26,proteinas:0.8,grasas:0.3,carbohidratos:6},
+            {codigo:403,nombre:"Aceituna verde",calorias:137,proteinas:1.5,grasas:13.5,carbohidratos:5.2},
+            {codigo:404,nombre:"Albaricoque",calorias:50,proteinas:1,grasas:0.1,carbohidratos:13.9},
+            {codigo:405,nombre:"Albaricoque, compota para ninos",calorias:64,proteinas:1,grasas:0.4,carbohidratos:15.2},
+            {codigo:406,nombre:"Albaricoque enlatado, con sirup",calorias:84,proteinas:0.6,grasas:0.1,carbohidratos:21.8},
+            {codigo:407,nombre:"Albaricoque seco",calorias:284,proteinas:5.2,grasas:0.4,carbohidratos:67.9},
+            {codigo:408,nombre:"Anon",calorias:100,proteinas:1.6,grasas:0.2,carbohidratos:24.6},
+            {codigo:409,nombre:"Caimito",calorias:72,proteinas:0.8,grasas:1.6,carbohidratos:14.5},
             {codigo:410,nombre:"Cambur cuyaco",calorias:92,proteinas:1.9,grasas:0.7,carbohidratos:19.8},
+            {codigo:411,nombre:"Cambur guineo morado",calorias:85,proteinas:1.2,grasas:0.6,carbohidratos:19.3},
+            {codigo:412,nombre:"Cambur guineo verde",calorias:78,proteinas:1.7,grasas:0.6,carbohidratos:17},
+            {codigo:413,nombre:"Cambur, harina de,",calorias:358,proteinas:3.7,grasas:0.5,carbohidratos:85.6},
+            {codigo:414,nombre:"Cambur manzano",calorias:95,proteinas:1,grasas:1.3,carbohidratos:23.2},
+            {codigo:415,nombre:"Cambur pasado",calorias:231,proteinas:3.3,grasas:2.8,carbohidratos:49.2},
+            {codigo:416,nombre:"Cambur pineo",calorias:70,proteinas:1.5,grasas:1,carbohidratos:17.2},
+            {codigo:417,nombre:"Cambur titiaro",calorias:132,proteinas:1.4,grasas:1.9,carbohidratos:27.7},
+            {codigo:418,nombre:"Cambur topocho",calorias:124,proteinas:1.3,grasas:1,carbohidratos:27.8},
+            {codigo:419,nombre:"Ciruela de huesito",calorias:80,proteinas:0.9,grasas:0.8,carbohidratos:17.9},
+            {codigo:420,nombre:"Ciruela morada (importada)",calorias:57,proteinas:0.7,grasas:0.2,carbohidratos:14.9},
+            {codigo:421,nombre:"Ciruela pasa",calorias:272,proteinas:2.3,grasas:0.6,carbohidratos:72.6},
+            {codigo:422,nombre:"Coco maduro",calorias:295,proteinas:3.5,grasas:27.2,carbohidratos:15.7},
+            {codigo:423,nombre:"Coco tierno",calorias:117,proteinas:1.9,grasas:11.9,carbohidratos:4.7},
+            {codigo:424,nombre:"Curuba",calorias:29,proteinas:0.6,grasas:0.1,carbohidratos:6.6},
+            {codigo:425,nombre:"Chirimorrinon (chirimoya)",calorias:91,proteinas:1.1,grasas:0.2,carbohidratos:23.2},
+            {codigo:426,nombre:"Chirimoya (corazon)",calorias:91,proteinas:1.1,grasas:1.2,carbohidratos:20.3},
+            {codigo:427,nombre:"Datil seco",calorias:281,proteinas:2.2,grasas:0.6,carbohidratos:75.4},
+            {codigo:428,nombre:"Durazno criollo",calorias:49,proteinas:0.4,grasas:0.1,carbohidratos:13.3},
             {codigo:429,nombre:"Fresa",calorias:39,proteinas:0.8,grasas:0.5,carbohidratos:9.7},
+            {codigo:430,nombre:"Fruta de pan",calorias:90,proteinas:1.3,grasas:0.5,carbohidratos:21.9},
+            {codigo:431,nombre:"Granada",calorias:69,proteinas:0.7,grasas:0.5,carbohidratos:17.9},
+            {codigo:432,nombre:"Grappe fruit",calorias:32,proteinas:0.8,grasas:0,carbohidratos:8.1},
+            {codigo:433,nombre:"Guama",calorias:67,proteinas:1,grasas:0.1,carbohidratos:16.7},
+            {codigo:434,nombre:"Guanabana",calorias:63,proteinas:1,grasas:0.4,carbohidratos:14.9},
+            {codigo:435,nombre:"Guayaba colorada o rosada",calorias:29,proteinas:1,grasas:0.4,carbohidratos:8.9},
+            {codigo:436,nombre:"Guayaba parcha o blanca",calorias:49,proteinas:1,grasas:0.5,carbohidratos:15.9},
+            {codigo:437,nombre:"Higo",calorias:85,proteinas:1.4,grasas:0.4,carbohidratos:21.3},
+            {codigo:438,nombre:"Higo seco",calorias:252,proteinas:4,grasas:1.2,carbohidratos:69.4},
+            {codigo:439,nombre:"Icaco",calorias:51,proteinas:0.4,grasas:0.1,carbohidratos:13.1},
+            {codigo:440,nombre:"Jobo amarillo",calorias:77,proteinas:0.8,grasas:2.1,carbohidratos:14.8},
+            {codigo:441,nombre:"Kiwi",calorias:60,proteinas:1,grasas:0.6,carbohidratos:0},
             {codigo:442,nombre:"Lechoza",calorias:31,proteinas:0.6,grasas:0.1,carbohidratos:8.4},
+            {codigo:443,nombre:"Lima dulce",calorias:34,proteinas:0.7,grasas:0.6,carbohidratos:7.4},
+            {codigo:444,nombre:"Limon",calorias:44,proteinas:0.9,grasas:0.6,carbohidratos:9.6},
+            {codigo:445,nombre:"Mamey",calorias:41,proteinas:0.3,grasas:0.6,carbohidratos:9.9},
+            {codigo:446,nombre:"Mamon",calorias:83,proteinas:1.2,grasas:1.3,carbohidratos:16.9},
             {codigo:447,nombre:"Mandarina",calorias:50,proteinas:0.8,grasas:0.3,carbohidratos:11.9},
+            {codigo:448,nombre:"Manga",calorias:55,proteinas:0.6,grasas:0.1,carbohidratos:14.8},
             {codigo:449,nombre:"Mango bocado",calorias:62,proteinas:0.6,grasas:0.1,carbohidratos:16.6},
+            {codigo:450,nombre:"Mango de hilacha",calorias:72,proteinas:0.6,grasas:0.1,carbohidratos:18.9},
+            {codigo:451,nombre:"Manzana, compota para ninos",calorias:65,proteinas:0.5,grasas:0.2,carbohidratos:16},
+            {codigo:452,nombre:"Manzana criolla",calorias:42,proteinas:0.4,grasas:0.2,carbohidratos:11.2},
             {codigo:453,nombre:"Manzana importada",calorias:55,proteinas:0.3,grasas:0.3,carbohidratos:14.7},
+            {codigo:454,nombre:"Manzana seca",calorias:270,proteinas:1.4,grasas:1,carbohidratos:73.2},
+            {codigo:455,nombre:"Melocoton",calorias:65,proteinas:0.5,grasas:0.1,carbohidratos:18.4},
+            {codigo:456,nombre:"Melocoton, compota para ninos",calorias:65,proteinas:0.8,grasas:0.3,carbohidratos:15.1},
+            {codigo:457,nombre:"Melocoton, enlatado con sirup",calorias:71,proteinas:0.4,grasas:0.1,carbohidratos:18.2},
+            {codigo:458,nombre:"Melocoton seco",calorias:253,proteinas:3,grasas:0.6,carbohidratos:70.4},
+            {codigo:459,nombre:"Melon",calorias:21,proteinas:0.6,grasas:0.2,carbohidratos:4.6},
+            {codigo:460,nombre:"Membrillo",calorias:51,proteinas:0.3,grasas:0.5,carbohidratos:17.3},
+            {codigo:461,nombre:"Merey",calorias:46,proteinas:0.8,grasas:0.3,carbohidratos:11.4},
+            {codigo:462,nombre:"Mora-Zarzamora",calorias:66,proteinas:1.2,grasas:0.6,carbohidratos:17.1},
+            {codigo:463,nombre:"Naranja cajera",calorias:58,proteinas:0.7,grasas:0.1,carbohidratos:13.9},
+            {codigo:464,nombre:"Naranja china",calorias:44,proteinas:1.4,grasas:0.7,carbohidratos:8.3},
             {codigo:465,nombre:"Naranja valencia",calorias:35,proteinas:0.7,grasas:0,carbohidratos:8.8},
+            {codigo:466,nombre:"Nispero",calorias:79,proteinas:0.4,grasas:1,carbohidratos:17.9},
+            {codigo:467,nombre:"Nispero del japon",calorias:47,proteinas:0.5,grasas:0.8,carbohidratos:10.5},
+            {codigo:468,nombre:"Parcha granadina",calorias:33,proteinas:0.8,grasas:0.6,carbohidratos:6.9},
+            {codigo:469,nombre:"Parcha morada",calorias:51,proteinas:1.3,grasas:0.6,carbohidratos:10.5},
+            {codigo:470,nombre:"Parchita",calorias:78,proteinas:1.8,grasas:3.4,carbohidratos:13.9},
             {codigo:471,nombre:"Patilla",calorias:21,proteinas:0.5,grasas:0,carbohidratos:5.1},
+            {codigo:472,nombre:"Pera",calorias:63,proteinas:0.7,grasas:0.4,carbohidratos:17.2},
+            {codigo:473,nombre:"Pera, compota para ninos",calorias:53,proteinas:0.7,grasas:0.2,carbohidratos:13.1},
+            {codigo:474,nombre:"Pera enlatada, con sirup",calorias:74,proteinas:0.2,grasas:0.1,carbohidratos:18.1},
             {codigo:475,nombre:"Pina",calorias:55,proteinas:0.4,grasas:0.2,carbohidratos:14.1},
+            {codigo:476,nombre:"Pitahaya",calorias:62,proteinas:1.4,grasas:0.4,carbohidratos:14.6},
             {codigo:477,nombre:"Platano maduro",calorias:137,proteinas:1.2,grasas:0.4,carbohidratos:34},
+            {codigo:478,nombre:"Platano maduro horneado",calorias:168,proteinas:1.5,grasas:0.2,carbohidratos:42.8},
+            {codigo:479,nombre:"Platano maduro sancochado",calorias:133,proteinas:1.2,grasas:0.3,carbohidratos:33.7},
+            {codigo:480,nombre:"Platano pinton",calorias:147,proteinas:1.2,grasas:0.2,carbohidratos:37.3},
             {codigo:481,nombre:"Platano verde",calorias:148,proteinas:1.4,grasas:0.3,carbohidratos:37.1},
+            {codigo:482,nombre:"Platano verde asado",calorias:201,proteinas:1.5,grasas:0.5,carbohidratos:47.9},
+            {codigo:483,nombre:"Platano verde, harina de",calorias:332,proteinas:2.7,grasas:1.6,carbohidratos:82.7},
+            {codigo:484,nombre:"Platano verde sancochado",calorias:138,proteinas:1.4,grasas:0.2,carbohidratos:36.7},
+            {codigo:485,nombre:"Platano verde, sopa de",calorias:74,proteinas:0.4,grasas:3.3,carbohidratos:11.2},
+            {codigo:486,nombre:"Pomarrosa",calorias:67,proteinas:0.6,grasas:0.2,carbohidratos:17},
+            {codigo:487,nombre:"Rinon",calorias:87,proteinas:2.1,grasas:0.9,carbohidratos:19.2},
+            {codigo:488,nombre:"Semeruco",calorias:40,proteinas:0.4,grasas:0.4,carbohidratos:9.1},
+            {codigo:489,nombre:"Tamarindo",calorias:296,proteinas:2.4,grasas:0.3,carbohidratos:73.7},
+            {codigo:490,nombre:"Tomate frances (de arbol)",calorias:44,proteinas:1.8,grasas:0.4,carbohidratos:11.2},
+            {codigo:491,nombre:"Toronja",calorias:38,proteinas:0.6,grasas:0.2,carbohidratos:9.3},
+            {codigo:492,nombre:"Tuna s/semilla",calorias:75,proteinas:0.5,grasas:0.1,carbohidratos:18.4},
+            {codigo:493,nombre:"Urupagua",calorias:200,proteinas:2.7,grasas:3.6,carbohidratos:40.9},
             {codigo:494,nombre:"Uva",calorias:68,proteinas:0.7,grasas:0.3,carbohidratos:17.2},
+            {codigo:495,nombre:"Uva de playa",calorias:81,proteinas:1.4,grasas:0.3,carbohidratos:20.3},
+            {codigo:496,nombre:"Uva pasa",calorias:277,proteinas:2.3,grasas:0.5,carbohidratos:71.2},
+            {codigo:497,nombre:"Zapote (mamey colorado)",calorias:111,proteinas:1.2,grasas:1,carbohidratos:25.2},
+            {codigo:498,nombre:"Arepa c/c/mechada",calorias:160,proteinas:15.5,grasas:2.7,carbohidratos:20.8},
+            {codigo:499,nombre:"Arepa c/ensal/galli/aguacat",calorias:158,proteinas:9.1,grasas:4.7,carbohidratos:22.1},
+            {codigo:500,nombre:"Arepa c/jamon y queso amarillo",calorias:176,proteinas:8.6,grasas:7.4,carbohidratos:20.6},
+            {codigo:501,nombre:"Arepa c/pollo",calorias:160,proteinas:10.9,grasas:3.8,carbohidratos:22.7},
+            {codigo:502,nombre:"Arepa c/queso guyanes",calorias:198,proteinas:8.8,grasas:8.4,carbohidratos:24.2},
+            {codigo:503,nombre:"Bocadillo de guayaba (3)",calorias:322,proteinas:0.4,grasas:0,carbohidratos:80.1},
+            {codigo:504,nombre:"Cachapa de budare (4)",calorias:137,proteinas:4,grasas:1.3,carbohidratos:34.2},
+            {codigo:505,nombre:"Cafunga (5)",calorias:156,proteinas:3.7,grasas:3.3,carbohidratos:27.8},
+            {codigo:506,nombre:"Carne mechada frita (6)",calorias:247,proteinas:21.3,grasas:16.5,carbohidratos:3.3},
+            {codigo:507,nombre:"Casabe (7)",calorias:333,proteinas:1.3,grasas:0.6,carbohidratos:84.7},
+            {codigo:508,nombre:"Catalina (8)",calorias:343,proteinas:8.1,grasas:0.8,carbohidratos:76.4},
+            {codigo:509,nombre:"Cotufa",calorias:50,proteinas:12,grasas:5.6,carbohidratos:72.8},
+            {codigo:510,nombre:"Churro (11)",calorias:373,proteinas:11.1,grasas:3.2,carbohidratos:75.4},
+            {codigo:511,nombre:"Empanada de caraota (12)",calorias:253,proteinas:4.1,grasas:13.4,carbohidratos:29.1},
+            {codigo:512,nombre:"Empanada de carne (12)",calorias:282,proteinas:5.8,grasas:14.7,carbohidratos:31.7},
+            {codigo:513,nombre:"Empanada de cazon (12)",calorias:262,proteinas:8.6,grasas:16,carbohidratos:21},
+            {codigo:514,nombre:"Empanada de queso (12)",calorias:292,proteinas:6.1,grasas:15.7,carbohidratos:31.6},
+            {codigo:515,nombre:"Flan preparado",calorias:113,proteinas:2.9,grasas:3.4,carbohidratos:17.8},
+            {codigo:516,nombre:"Gelatina preparada",calorias:67,proteinas:1.6,grasas:0,carbohidratos:15.2},
+            {codigo:517,nombre:"Golfeado (14)",calorias:326,proteinas:5.2,grasas:5.5,carbohidratos:64.4},
+            {codigo:518,nombre:"Hallaca criolla (15)",calorias:183,proteinas:6.5,grasas:10.8,carbohidratos:15},
+            {codigo:519,nombre:"Hamburguesa c/queso",calorias:247,proteinas:12.3,grasas:11.8,carbohidratos:24.6},
+            {codigo:520,nombre:"Hamburguesa doble carne/queso",calorias:285,proteinas:16.3,grasas:16.1,carbohidratos:20.3},
+            {codigo:521,nombre:"Hamburguesa c/queso y mayonesa",calorias:250,proteinas:14,grasas:14.1,carbohidratos:18.3},
+            {codigo:522,nombre:"Hervido de gallina (17)",calorias:74,proteinas:2.4,grasas:4.2,carbohidratos:7.2},
+            {codigo:523,nombre:"Hervido de pesacdo (17)",calorias:49,proteinas:8.6,grasas:3,carbohidratos:3.2},
+            {codigo:524,nombre:"Hervido de res (17)",calorias:60,proteinas:2.8,grasas:3.1,carbohidratos:6.5},
+            {codigo:525,nombre:"Jalea de mango",calorias:185,proteinas:0.5,grasas:1,carbohidratos:43.7},
+            {codigo:526,nombre:"Majarete (20)",calorias:128,proteinas:1.3,grasas:2.9,carbohidratos:24.2},
+            {codigo:527,nombre:"Mermelada",calorias:287,proteinas:0.5,grasas:0.3,carbohidratos:71.2},
+            {codigo:528,nombre:"Mondongo (sopa)(22)",calorias:95,proteinas:6.9,grasas:4.9,carbohidratos:6.1},
+            {codigo:529,nombre:"Pabellon (24)",calorias:136,proteinas:10.4,grasas:4.9,carbohidratos:16.9},
             {codigo:530,nombre:"Papas fritas",calorias:318,proteinas:4.5,grasas:11.3,carbohidratos:53.1},
+            {codigo:531,nombre:"Pelota (28)",calorias:111,proteinas:0.5,grasas:2.1,carbohidratos:22.5},
+            {codigo:532,nombre:"Platano maduro frito (tajadas)",calorias:224,proteinas:1.4,grasas:9.2,carbohidratos:39.2},
+            {codigo:533,nombre:"Platano maduro, dulce de",calorias:211,proteinas:1.5,grasas:0.9,carbohidratos:49.5},
+            {codigo:534,nombre:"Platano vere, tostones de",calorias:252,proteinas:1.9,grasas:10.1,carbohidratos:51.8},
+            {codigo:535,nombre:"Pudin preparado",calorias:130,proteinas:3.4,grasas:3.1,carbohidratos:22.2},
+            {codigo:536,nombre:"Tapioca seca",calorias:350,proteinas:0.6,grasas:0.2,carbohidratos:86.5},
             {codigo:537,nombre:"Aceite",calorias:900,proteinas:0,grasas:100,carbohidratos:0},
             {codigo:538,nombre:"Azucar blanca",calorias:398,proteinas:0,grasas:0,carbohidratos:99.5},
+            {codigo:539,nombre:"Azucar morena",calorias:383,proteinas:0,grasas:0,carbohidratos:95.8},
+            {codigo:540,nombre:"Cacao, grano integro s/cascara",calorias:563,proteinas:12.4,grasas:43.7,carbohidratos:34.3},
+            {codigo:541,nombre:"Cafe Tostado",calorias:398,proteinas:14.2,grasas:14,carbohidratos:61.4},
+            {codigo:542,nombre:"Cereal c/chocolate, tipo musli",calorias:351,proteinas:6.7,grasas:4.4,carbohidratos:77.8},
+            {codigo:543,nombre:"Cereal con fruta, tipo nusli",calorias:331,proteinas:6.7,grasas:2.2,carbohidratos:80},
+            {codigo:544,nombre:"Cereal infantil c/leche",calorias:410,proteinas:16,grasas:8,carbohidratos:69},
+            {codigo:545,nombre:"Cereal infantil sin leche (16%proteina)",calorias:356,proteinas:16,grasas:0.8,carbohidratos:72.2},
+            {codigo:546,nombre:"Cereal infantil sin leche (- 16% proteina)",calorias:365,proteinas:9.6,grasas:2.6,carbohidratos:78.9},
+            {codigo:547,nombre:"Chocolate simple dulce",calorias:467,proteinas:3.8,grasas:16.8,carbohidratos:76.1},
+            {codigo:548,nombre:"Ensalada de frutas enlatadas",calorias:75,proteinas:0.4,grasas:0.2,carbohidratos:19},
+            {codigo:549,nombre:"Ensaladas vegetales, mayonesa, enlatada",calorias:83,proteinas:1.3,grasas:3.8,carbohidratos:12.1},
+            {codigo:550,nombre:"Flan en polvo",calorias:395,proteinas:0,grasas:0.2,carbohidratos:98.2},
+            {codigo:551,nombre:"Gelatina en polvo (azucar y sabor)",calorias:392,proteinas:9.4,grasas:0,carbohidratos:88.7},
+            {codigo:552,nombre:"Gelatina seca natural",calorias:343,proteinas:85.6,grasas:0.1,carbohidratos:0},
+            {codigo:553,nombre:"Gofio cumanes",calorias:334,proteinas:0.5,grasas:1.4,carbohidratos:80.4},
+            {codigo:554,nombre:"Helado de crema",calorias:212,proteinas:4.1,grasas:12,carbohidratos:22},
+            {codigo:555,nombre:"Helado de leche",calorias:125,proteinas:5,grasas:4,carbohidratos:25.4},
+            {codigo:556,nombre:"Lactovisoy",calorias:389,proteinas:16,grasas:0.9,carbohidratos:78.4},
+            {codigo:557,nombre:"Levadura de cerveza, seca",calorias:345,proteinas:36.9,grasas:1.6,carbohidratos:46.6},
+            {codigo:558,nombre:"Manteca de cerdo",calorias:900,proteinas:0,grasas:100,carbohidratos:0},
+            {codigo:559,nombre:"Margarina",calorias:733,proteinas:0.6,grasas:81,carbohidratos:0.4},
+            {codigo:560,nombre:"Mayonesa comercial",calorias:748,proteinas:1.1,grasas:80,carbohidratos:6.2},
+            {codigo:561,nombre:"Melaza",calorias:260,proteinas:0,grasas:0,carbohidratos:65},
+            {codigo:562,nombre:"Mezcla para H/cachapas",calorias:366,proteinas:6.9,grasas:1.5,carbohidratos:81.3},
+            {codigo:563,nombre:"Mezcla para H/panqueca",calorias:343,proteinas:8.8,grasas:0.5,carbohidratos:77.8},
             {codigo:564,nombre:"Miel de abeja",calorias:319,proteinas:0.3,grasas:0,carbohidratos:79.5},
+            {codigo:565,nombre:"Miel de caña",calorias:296,proteinas:0.5,grasas:0.2,carbohidratos:73.1},
+            {codigo:566,nombre:"Mostaza",calorias:84,proteinas:4.7,grasas:4.4,carbohidratos:6.4},
+            {codigo:567,nombre:"Palitos de maiz c/leche en polvo",calorias:528,proteinas:6.2,grasas:30,carbohidratos:58.4},
+            {codigo:568,nombre:"Palitos de maiz s/leche en polvo",calorias:496,proteinas:6,grasas:24,carbohidratos:64},
+            {codigo:569,nombre:"Papelon blanco",calorias:371,proteinas:0.2,grasas:0,carbohidratos:92.5},
+            {codigo:570,nombre:"Papelon negro",calorias:370,proteinas:0.6,grasas:0,carbohidratos:92},
+            {codigo:571,nombre:"Papelon rojo",calorias:360,proteinas:0.7,grasas:0,carbohidratos:89.4},
+            {codigo:572,nombre:"Pasta de tomate",calorias:78,proteinas:5.2,grasas:0.2,carbohidratos:18.8},
+            {codigo:573,nombre:"Productos en polvo B/azucar, cacao y leche",calorias:393,proteinas:6.8,grasas:2.3,carbohidratos:86.3},
+            {codigo:574,nombre:"Pudin el polvo",calorias:382,proteinas:0,grasas:0.3,carbohidratos:64.9},
+            {codigo:575,nombre:"Sopa, Caldo de fideos o arroz",calorias:320,proteinas:18.8,grasas:4.3,carbohidratos:51.9},
+            {codigo:576,nombre:"Sopa, crema de pollo",calorias:393,proteinas:15.2,grasas:14.1,carbohidratos:51.5},
+            {codigo:577,nombre:"Sopa, crema de vegetales",calorias:352,proteinas:12.6,grasas:9.1,carbohidratos:55.9},
+            {codigo:578,nombre:"Cubito de carne",calorias:246,proteinas:12.1,grasas:15.9,carbohidratos:13.5},
+            {codigo:579,nombre:"Cubito de pollo",calorias:265,proteinas:9.7,grasas:17.8,carbohidratos:16.4},
+            {codigo:580,nombre:"Sopa, minestrone",calorias:0,proteinas:13.5,grasas:6.7,carbohidratos:58.7},
+            {codigo:581,nombre:"Sorbete de fruta",calorias:152,proteinas:1.1,grasas:1.5,carbohidratos:33.6},
+            {codigo:582,nombre:"Tomate, pure de",calorias:39,proteinas:1.7,grasas:0.1,carbohidratos:10.1},
+            {codigo:583,nombre:"Tomate, salsa de, (Ketchup)",calorias:94,proteinas:2,grasas:0.4,carbohidratos:24.5},
+            {codigo:584,nombre:"Aguardiente (40% alcohol)",calorias:278,proteinas:0,grasas:0,carbohidratos:0},
+            {codigo:585,nombre:"Cerveza (5% alcohol)",calorias:48,proteinas:0.6,grasas:0,carbohidratos:3.8},
+            {codigo:586,nombre:"Ginebra (45% alcohol)",calorias:263,proteinas:0,grasas:0,carbohidratos:0},
+            {codigo:587,nombre:"Ponche crema (14 % alcohol)",calorias:220,proteinas:4.5,grasas:5.2,carbohidratos:14.4},
+            {codigo:588,nombre:"Ron (44 % alcohol)",calorias:305,proteinas:0,grasas:0,carbohidratos:0},
+            {codigo:589,nombre:"Vino (promedio 7,5% alcohol)",calorias:53,proteinas:0,grasas:0,carbohidratos:0.1},
+            {codigo:590,nombre:"Vodkal (40% alcohol)",calorias:231,proteinas:0,grasas:0,carbohidratos:0},
+            {codigo:591,nombre:"Whixky (42,2 % alcohol)",calorias:293,proteinas:0,grasas:0,carbohidratos:0},
+            {codigo:592,nombre:"Bebidas gaseosas",calorias:48,proteinas:0,grasas:0,carbohidratos:12},
+            {codigo:593,nombre:"Cafe, Infusion sin azucar",calorias:5,proteinas:0.3,grasas:0.1,carbohidratos:0.8},
+            {codigo:594,nombre:"Caña, jugo de",calorias:63,proteinas:0.2,grasas:0,carbohidratos:15.5},
+            {codigo:595,nombre:"Coco, jugo de",calorias:18,proteinas:0.2,grasas:0.1,carbohidratos:4.1},
+            {codigo:596,nombre:"Chicha (9)",calorias:98,proteinas:0.6,grasas:0,carbohidratos:23.8},
+            {codigo:597,nombre:"Chicha envasada (pur-park)",calorias:85,proteinas:1.6,grasas:0.1,carbohidratos:19.5},
+            {codigo:598,nombre:"Malta",calorias:48,proteinas:0.6,grasas:0,carbohidratos:11.5},
+            {codigo:599,nombre:"Manzana, jugo fresco",calorias:55,proteinas:0.1,grasas:0,carbohidratos:13.7},
+            {codigo:600,nombre:"Naranja, jugo fresco",calorias:29,proteinas:0.4,grasas:0,carbohidratos:6.9},
+            {codigo:601,nombre:"Naranjada",calorias:21,proteinas:0.2,grasas:0,carbohidratos:5},
+            {codigo:602,nombre:"Piña, jugo enlatado",calorias:63,proteinas:0.3,grasas:0.1,carbohidratos:15.2},
+            {codigo:603,nombre:"Te, infusion",calorias:2,proteinas:0.1,grasas:0,carbohidratos:0.4},
+            {codigo:604,nombre:"Uva, jugo de",calorias:74,proteinas:0.4,grasas:0,carbohidratos:18.2},
             {codigo:605,nombre:"Almendra",calorias:579,proteinas:18.6,grasas:54.1,carbohidratos:19.6},
+            {codigo:606,nombre:"Avellana",calorias:622,proteinas:12.5,grasas:58,carbohidratos:18.6},
+            {codigo:607,nombre:"Castaña, cocida",calorias:190,proteinas:3.6,grasas:1.9,carbohidratos:48.3},
             {codigo:608,nombre:"Mani tostado, sin pelicula",calorias:558,proteinas:28.8,grasas:45.4,carbohidratos:19.6},
+            {codigo:609,nombre:"Merey",calorias:567,proteinas:19.4,grasas:42.2,carbohidratos:30.2},
+            {codigo:610,nombre:"Nuez",calorias:772,proteinas:14,grasas:63.3,carbohidratos:17.7},
+            {codigo:611,nombre:"Nuez del brasil",calorias:692,proteinas:15.4,grasas:67.7,carbohidratos:11.7},
+            {codigo:612,nombre:"Pistacho",calorias:581,proteinas:17.6,grasas:51.6,carbohidratos:22.2},
+            {codigo:613,nombre:"Carne de tortuga",calorias:228,proteinas:10.5,grasas:20.7,carbohidratos:0},
+            {codigo:614,nombre:"Copoazu",calorias:49,proteinas:1.2,grasas:0.4,carbohidratos:11.5},
+            {codigo:615,nombre:"Chufa",calorias:317,proteinas:4.9,grasas:15,carbohidratos:45.4},
+            {codigo:616,nombre:"Guayaba brasilera",calorias:12,proteinas:0.5,grasas:0,carbohidratos:3.3},
+            {codigo:617,nombre:"Harina de platano",calorias:330,proteinas:2.9,grasas:0.2,carbohidratos:85.2},
+            {codigo:618,nombre:"Larvas de guasimo",calorias:55,proteinas:7.8,grasas:1.2,carbohidratos:3.3},
+            {codigo:619,nombre:"Manirote (Catiguire)",calorias:58,proteinas:0.8,grasas:0.6,carbohidratos:13.4},
+            {codigo:620,nombre:"Mañoco",calorias:369,proteinas:1.6,grasas:0.4,carbohidratos:86.4},
+            {codigo:621,nombre:"Mañoco de pijiguao",calorias:378,proteinas:4.9,grasas:12.1,carbohidratos:75},
+            {codigo:622,nombre:"Moriche gusano de, asado",calorias:230,proteinas:8.2,grasas:19.2,carbohidratos:5.9},
+            {codigo:623,nombre:"Pijiguao",calorias:132,proteinas:3.7,grasas:5,carbohidratos:22.3},
+            {codigo:624,nombre:"Tupiro",calorias:20,proteinas:0.5,grasas:0,carbohidratos:6.3},
             {codigo:625,nombre:"Semilla de Chia",calorias:486,proteinas:16.5,grasas:0.2,carbohidratos:70.9},
+            {codigo:626,nombre:"Yorumo",calorias:285,proteinas:0.2,grasas:0.2,carbohidratos:70.9},
             {codigo:627,nombre:"Yogurt griego",calorias:139,proteinas:6.4,grasas:10.20,carbohidratos:5.39},
+            {codigo:628,nombre:"vinagre de manzana",calorias:21,proteinas:0,grasas:0,carbohidratos:1},
+            {codigo:629,nombre:"Pimenton molido paprika",calorias:282,proteinas:14.1,grasas:12.9,carbohidratos:54.0},
+            {codigo:630,nombre:"Ajo en polvo",calorias:331,proteinas:16.5,grasas:0.7,carbohidratos:72.7},
+            {codigo:631,nombre:"Cebolla en polvo",calorias:341,proteinas:10.1,grasas:1.0,carbohidratos:79.1},
+            {codigo:632,nombre:"Pimienta negra",calorias:251,proteinas:10.4,grasas:3.3,carbohidratos:64.0},
+            {codigo:633,nombre:"Comino",calorias:375,proteinas:17.8,grasas:22.3,carbohidratos:44.2},
+            {codigo:634,nombre:"Canela molida",calorias:247,proteinas:4.0,grasas:1.2,carbohidratos:80.6},
+            {codigo:635,nombre:"Curcuma",calorias:312,proteinas:7.8,grasas:3.2,carbohidratos:67.1},
+            {codigo:636,nombre:"Oregano seco",calorias:265,proteinas:9.0,grasas:4.3,carbohidratos:68.9},
             {codigo:637,nombre:"mantequilla de mani",calorias:630,proteinas:25,grasas:50,carbohidratos:20},
             {codigo:638,nombre:"quinoa",calorias:368,proteinas:14.12,grasas:7,carbohidratos:64.2},
+            {codigo:639,nombre:"Queso ricota",calorias:148,proteinas:9.6,grasas:9.5,carbohidratos:6},
+            {codigo:640,nombre:"cebolla morada",calorias:40,proteinas:0.89,grasas:0.08,carbohidratos:9.74},
+            {codigo:641,nombre:"bistec, carne",calorias:231,proteinas:29.4,grasas:12,carbohidratos:0},
             {codigo:642,nombre:"aceite de oliva",calorias:892,proteinas:0,grasas:100,carbohidratos:0},
             {codigo:643,nombre:"cilantro",calorias:23,proteinas:2.1,grasas:0.52,carbohidratos:3.7}
         ];
@@ -1570,7 +1938,7 @@
         let datosPaciente = { nombre: "", edad: 0, sexo: "" };
         let selectionMode = false;
         let selectedMenus = new Set();
-        let macroExclusions = {};
+        let macroExclusions = {};  // estructura: { 'desayuno': { carbs: false, protein: false, fat: false }, ... }
         let currentDailyPlan = null;
 
         // Configuración de comidas
@@ -1601,9 +1969,7 @@
         // --------------------------------------------------------------
         function showTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`${tab}-tab`).style.display = 'block';
-            event.target.classList.add('active');
             
             if (tab === 'menu') {
                 cargarListaAlimentos();
@@ -1832,15 +2198,15 @@
             let grasGram = calorias * (pg / 100) / 9;
             
             macrosDiarios = {
-                calorias: calorias,
-                carbs: carbGram,
-                proteinas: protGram,
-                grasas: grasGram,
-                pCarbs: pc,
-                pProt: pp,
-                pGras: pg    
-            };
-            macroExclusions = {};  
+    calorias: calorias,
+    carbs: carbGram,
+    proteinas: protGram,
+    grasas: grasGram,
+    pCarbs: pc,
+    pProt: pp,
+    pGras: pg    
+};
+macroExclusions = {};  
             
             document.getElementById('macros-resultado').innerHTML = `
                 <div class="highlight">
@@ -1866,13 +2232,15 @@
             actualizarObjetivosPorCategoria();
         }
 
+
+
         // --------------------------------------------------------------
         // 8. DISTRIBUCIÓN DE COMIDAS
         // --------------------------------------------------------------
         function cambiarCantidadComidas() {
             const cantidad = parseInt(document.getElementById('meal-count-select').value);
             comidasActivas = comidasDisponibles.slice(0, cantidad);
-            macroExclusions = {};
+            macroExclusions = {};  // reiniciar exclusiones
             const base = Math.floor(100 / cantidad);
             const resto = 100 - (base * cantidad);
             comidasActivas.forEach((comida, i) => comida.porcentaje = base + (i === 0 ? resto : 0));
@@ -1933,147 +2301,172 @@
             }
             actualizarObjetivosPorCategoria();
         }
+        
+        
 
-        function calcularMacrosPorComidaConExclusiones() {
-            let comidasValoresBase = [];
-            comidasActivas.forEach(comida => {
-                let factor = comida.porcentaje / 100;
-                comidasValoresBase.push({
-                    id: comida.id,
-                    nombre: comida.nombre,
-                    porcentaje: comida.porcentaje,
-                    kcal: macrosDiarios.calorias * factor,
-                    carbs: macrosDiarios.carbs * factor,
-                    protein: macrosDiarios.proteinas * factor,
-                    fat: macrosDiarios.grasas * factor
-                });
-            });
+// Función que calcula los macros redistribuidos según exclusiones
+function calcularMacrosPorComidaConExclusiones() {
+    let comidasValoresBase = [];
+    comidasActivas.forEach(comida => {
+        let factor = comida.porcentaje / 100;
+        comidasValoresBase.push({
+            id: comida.id,
+            nombre: comida.nombre,
+            porcentaje: comida.porcentaje,
+            kcal: macrosDiarios.calorias * factor,
+            carbs: macrosDiarios.carbs * factor,
+            protein: macrosDiarios.proteinas * factor,
+            fat: macrosDiarios.grasas * factor
+        });
+    });
 
-            comidasActivas.forEach(comida => {
-                if (!macroExclusions[comida.id]) {
-                    macroExclusions[comida.id] = { carbs: false, protein: false, fat: false };
-                }
-            });
-
-            let resultado = comidasValoresBase.map(c => ({ ...c }));
-            const macros = ['carbs', 'protein', 'fat'];
-
-            macros.forEach(macro => {
-                let totalExcluido = 0;
-                let comidasNoExcluidas = [];
-                let comidasQueExcluyen = [];
-
-                comidasValoresBase.forEach((comida, idx) => {
-                    if (macroExclusions[comida.id][macro]) {
-                        totalExcluido += comida[macro];
-                        comidasQueExcluyen.push(idx);
-                    } else {
-                        comidasNoExcluidas.push(idx);
-                    }
-                });
-
-                if (totalExcluido > 0 && comidasNoExcluidas.length > 0) {
-                    let sumaPorcentajesNoExcluidas = 0;
-                    comidasNoExcluidas.forEach(idx => {
-                        sumaPorcentajesNoExcluidas += comidasValoresBase[idx].porcentaje;
-                    });
-                    comidasNoExcluidas.forEach(idx => {
-                        let proporcion = comidasValoresBase[idx].porcentaje / sumaPorcentajesNoExcluidas;
-                        resultado[idx][macro] += totalExcluido * proporcion;
-                    });
-                    comidasQueExcluyen.forEach(idx => {
-                        resultado[idx][macro] = 0;
-                    });
-                } else if (totalExcluido > 0 && comidasNoExcluidas.length === 0) {
-                    comidasQueExcluyen.forEach(idx => {
-                        resultado[idx][macro] = 0;
-                    });
-                }
-            });
-
-            return resultado;
+    // Inicializar exclusiones
+    comidasActivas.forEach(comida => {
+        if (!macroExclusions[comida.id]) {
+            macroExclusions[comida.id] = { carbs: false, protein: false, fat: false };
         }
+    });
 
-        function mostrarMacrosPorComida() {
-            let comidasConMacros = calcularMacrosPorComidaConExclusiones();
+    let resultado = comidasValoresBase.map(c => ({ ...c }));
+    const macros = ['carbs', 'protein', 'fat'];
 
-            let html = `
-                <table style="width:100%; border-collapse:collapse;">
-                    <tr style="background:#2A7B9B;color:white">
-                        <th style="padding:8px;">Comida</th>
-                        <th style="padding:8px;">🔥 kcal</th>
-                        <th style="padding:8px;">🥔 HC (g)</th>
-                        <th style="padding:8px;">🍗 PRO (g)</th>
-                        <th style="padding:8px;">🧈 GRA (g)</th>
-                        <th style="padding:8px;">⚙️ Excluir</th>
-                    </tr>
-            `;
+    macros.forEach(macro => {
+        let totalExcluido = 0;
+        let comidasNoExcluidas = [];
+        let comidasQueExcluyen = [];
 
-            comidasConMacros.forEach(comida => {
-                let ex = macroExclusions[comida.id] || { carbs: false, protein: false, fat: false };
-                html += `
-                    <tr style="border-bottom:1px solid #ddd">
-                        <td style="padding:8px;">${comida.nombre}</td>
-                        <td style="padding:8px;text-align:center;">${Math.round(comida.kcal)}</td>
-                        <td style="padding:8px;text-align:center; ${ex.carbs ? 'color:#aaa;' : ''}">
-                            ${ex.carbs ? '0 (redist.)' : comida.carbs.toFixed(1)}
-                        </td>
-                        <td style="padding:8px;text-align:center; ${ex.protein ? 'color:#aaa;' : ''}">
-                            ${ex.protein ? '0 (redist.)' : comida.protein.toFixed(1)}
-                        </td>
-                        <td style="padding:8px;text-align:center; ${ex.fat ? 'color:#aaa;' : ''}">
-                            ${ex.fat ? '0 (redist.)' : comida.fat.toFixed(1)}
-                        </td>
-                        <td style="padding:8px;text-align:center;">
-                            <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="carbs" style="background:${ex.carbs ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 HC</button>
-                            <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="protein" style="background:${ex.protein ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 PRO</button>
-                            <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="fat" style="background:${ex.fat ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 GRA</button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            html += `</table>`;
-            document.getElementById('meal-macros-content').innerHTML = html;
-            document.getElementById('meal-macros-resultado').style.display = 'block';
-
-            document.querySelectorAll('.macro-toggle-btn').forEach(btn => {
-                if (btn._handler) btn.removeEventListener('click', btn._handler);
-                const handler = (e) => {
-                    e.stopPropagation();
-                    let mealId = btn.getAttribute('data-meal');
-                    let macro = btn.getAttribute('data-macro');
-                    toggleMacroExclusion(mealId, macro);
-                };
-                btn.addEventListener('click', handler);
-                btn._handler = handler;
-            });
-        }
-
-        function toggleMacroExclusion(mealId, macro) {
-            if (!macroExclusions[mealId]) {
-                macroExclusions[mealId] = { carbs: false, protein: false, fat: false };
+        comidasValoresBase.forEach((comida, idx) => {
+            if (macroExclusions[comida.id][macro]) {
+                totalExcluido += comida[macro];
+                comidasQueExcluyen.push(idx);
+            } else {
+                comidasNoExcluidas.push(idx);
             }
-            macroExclusions[mealId][macro] = !macroExclusions[mealId][macro];
-            mostrarMacrosPorComida(); 
-            actualizarObjetivosPorCategoria();
-        }
+        });
 
+        if (totalExcluido > 0 && comidasNoExcluidas.length > 0) {
+            let sumaPorcentajesNoExcluidas = 0;
+            comidasNoExcluidas.forEach(idx => {
+                sumaPorcentajesNoExcluidas += comidasValoresBase[idx].porcentaje;
+            });
+            comidasNoExcluidas.forEach(idx => {
+                let proporcion = comidasValoresBase[idx].porcentaje / sumaPorcentajesNoExcluidas;
+                resultado[idx][macro] += totalExcluido * proporcion;
+            });
+            comidasQueExcluyen.forEach(idx => {
+                resultado[idx][macro] = 0;
+            });
+        } else if (totalExcluido > 0 && comidasNoExcluidas.length === 0) {
+            comidasQueExcluyen.forEach(idx => {
+                resultado[idx][macro] = 0;
+            });
+        }
+    });
+
+    return resultado;
+}
+
+// Función que muestra la tabla con los valores redistribuidos
+function mostrarMacrosPorComida() {
+    let comidasConMacros = calcularMacrosPorComidaConExclusiones();
+
+    let html = `
+        <table style="width:100%; border-collapse:collapse;">
+            <tr style="background:#2A7B9B;color:white">
+                <th style="padding:8px;">Comida</th>
+                <th style="padding:8px;">🔥 kcal</th>
+                <th style="padding:8px;">🥔 HC (g)</th>
+                <th style="padding:8px;">🍗 PRO (g)</th>
+                <th style="padding:8px;">🧈 GRA (g)</th>
+                <th style="padding:8px;">⚙️ Excluir</th>
+            </tr>
+    `;
+
+    comidasConMacros.forEach(comida => {
+        let ex = macroExclusions[comida.id] || { carbs: false, protein: false, fat: false };
+        html += `
+            <tr style="border-bottom:1px solid #ddd">
+                <td style="padding:8px;">${comida.nombre}</td>
+                <td style="padding:8px;text-align:center;">${Math.round(comida.kcal)}</td>
+                <td style="padding:8px;text-align:center; ${ex.carbs ? 'color:#aaa;' : ''}">
+                    ${ex.carbs ? '0 (redist.)' : comida.carbs.toFixed(1)}
+                </td>
+                <td style="padding:8px;text-align:center; ${ex.protein ? 'color:#aaa;' : ''}">
+                    ${ex.protein ? '0 (redist.)' : comida.protein.toFixed(1)}
+                </td>
+                <td style="padding:8px;text-align:center; ${ex.fat ? 'color:#aaa;' : ''}">
+                    ${ex.fat ? '0 (redist.)' : comida.fat.toFixed(1)}
+                </td>
+                <td style="padding:8px;text-align:center;">
+                    <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="carbs" style="background:${ex.carbs ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 HC</button>
+                    <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="protein" style="background:${ex.protein ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 PRO</button>
+                    <button class="macro-toggle-btn" data-meal="${comida.id}" data-macro="fat" style="background:${ex.fat ? '#dc3545' : '#6c757d'}; color:white; border:none; border-radius:5px; padding:4px 8px; margin:2px; cursor:pointer;">🚫 GRA</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    html += `</table>`;
+    document.getElementById('meal-macros-content').innerHTML = html;
+    document.getElementById('meal-macros-resultado').style.display = 'block';
+
+    // Asignar eventos a los botones
+    document.querySelectorAll('.macro-toggle-btn').forEach(btn => {
+        if (btn._handler) btn.removeEventListener('click', btn._handler);
+        const handler = (e) => {
+            e.stopPropagation();
+            let mealId = btn.getAttribute('data-meal');
+            let macro = btn.getAttribute('data-macro');
+            toggleMacroExclusion(mealId, macro);
+        };
+        btn.addEventListener('click', handler);
+        btn._handler = handler;
+    });
+}
+
+// Función para alternar exclusión y refrescar
+function toggleMacroExclusion(mealId, macro) {
+    if (!macroExclusions[mealId]) {
+        macroExclusions[mealId] = { carbs: false, protein: false, fat: false };
+    }
+    macroExclusions[mealId][macro] = !macroExclusions[mealId][macro];
+    mostrarMacrosPorComida(); 
+    actualizarObjetivosPorCategoria(); // Actualiza la tabla con redistribución
+}
         function aplicarPresetComidas(preset) {
             if (preset === 'equilibrado') {
-                if (comidasActivas.length === 5) {
+                if (comidasActivas.length === 6) {
+                    comidasActivas[0].porcentaje = 20;
+                    comidasActivas[1].porcentaje = 10;
+                    comidasActivas[2].porcentaje = 30;
+                    comidasActivas[3].porcentaje = 10;
+                    comidasActivas[4].porcentaje = 20;
+                    comidasActivas[5].porcentaje = 10;
+                } else if (comidasActivas.length === 5) {
                     comidasActivas[0].porcentaje = 25;
                     comidasActivas[1].porcentaje = 10;
                     comidasActivas[2].porcentaje = 30;
                     comidasActivas[3].porcentaje = 10;
                     comidasActivas[4].porcentaje = 25;
+                } else if (comidasActivas.length === 4) {
+                    comidasActivas[0].porcentaje = 25;
+                    comidasActivas[1].porcentaje = 25;
+                    comidasActivas[2].porcentaje = 25;
+                    comidasActivas[3].porcentaje = 25;
                 } else if (comidasActivas.length === 3) {
                     comidasActivas[0].porcentaje = 33;
                     comidasActivas[1].porcentaje = 34;
                     comidasActivas[2].porcentaje = 33;
                 }
             } else if (preset === 'fitness') {
-                if (comidasActivas.length === 5) {
+                if (comidasActivas.length === 6) {
+                    comidasActivas[0].porcentaje = 20;
+                    comidasActivas[1].porcentaje = 15;
+                    comidasActivas[2].porcentaje = 30;
+                    comidasActivas[3].porcentaje = 15;
+                    comidasActivas[4].porcentaje = 15;
+                    comidasActivas[5].porcentaje = 5;
+                } else if (comidasActivas.length === 5) {
                     comidasActivas[0].porcentaje = 20;
                     comidasActivas[1].porcentaje = 15;
                     comidasActivas[2].porcentaje = 35;
@@ -2088,7 +2481,14 @@
                     comidasActivas[comidasActivas.length - 1].porcentaje = 30;
                 }
             } else if (preset === 'completo') {
-                if (comidasActivas.length === 5) {
+                if (comidasActivas.length === 6) {
+                    comidasActivas[0].porcentaje = 20;
+                    comidasActivas[1].porcentaje = 15;
+                    comidasActivas[2].porcentaje = 30;
+                    comidasActivas[3].porcentaje = 15;
+                    comidasActivas[4].porcentaje = 15;
+                    comidasActivas[5].porcentaje = 5;
+                } else if (comidasActivas.length === 5) {
                     comidasActivas[0].porcentaje = 20;
                     comidasActivas[1].porcentaje = 15;
                     comidasActivas[2].porcentaje = 30;
@@ -2100,112 +2500,272 @@
             generarInterfazComidas();
             actualizarDistribucionComidas();
         }
-
+        
         function exportarDistribucionComidas() {
-            if (!macrosDiarios.calorias || macrosDiarios.calorias === 0) {
-                alert('Primero calcula los macros diarios en la pestaña Macros');
-                return;
-            }
+    if (!macrosDiarios.calorias || macrosDiarios.calorias === 0) {
+        alert('Primero calcula los macros diarios en la pestaña Macros');
+        return;
+    }
 
-            const nombrePaciente = document.getElementById('nombre-paciente').value.trim() || "No especificado";
-            const edad = document.getElementById('edad').value || "—";
-            const sexoSelect = document.getElementById('sexo');
-            const sexo = sexoSelect.options[sexoSelect.selectedIndex]?.text || "—";
-            const objetivoSelect = document.getElementById('objetivo');
-            let objetivoTexto = "";
-            switch(objetivoSelect.value) {
-                case 'mantener': objetivoTexto = "Mantenimiento de peso"; break;
-                case 'definir': objetivoTexto = "Definición (déficit calórico)"; break;
-                case 'volumen': objetivoTexto = "Volumen muscular (superávit calórico)"; break;
-                default: objetivoTexto = "Personalizado";
-            }
-            const numeroComidas = comidasActivas.length;
-            const fecha = new Date().toLocaleDateString();
+    // Obtener datos del paciente
+    const nombrePaciente = document.getElementById('nombre-paciente').value.trim() || "No especificado";
+    const edad = document.getElementById('edad').value || "—";
+    const sexoSelect = document.getElementById('sexo');
+    const sexo = sexoSelect.options[sexoSelect.selectedIndex]?.text || "—";
+    const objetivoSelect = document.getElementById('objetivo');
+    let objetivoTexto = "";
+    switch(objetivoSelect.value) {
+        case 'mantener': objetivoTexto = "Mantenimiento de peso"; break;
+        case 'definir': objetivoTexto = "Definición (déficit calórico)"; break;
+        case 'volumen': objetivoTexto = "Volumen muscular (superávit calórico)"; break;
+        default: objetivoTexto = "Personalizado";
+    }
+    const numeroComidas = comidasActivas.length;
+    const fecha = new Date().toLocaleDateString();
 
-            let aguaRecomendada = { litros: "—", vasos: "—", formula: "—" };
-            if (pesoActual) {
-                const actividad = parseFloat(document.getElementById('actividad').value);
-                const agua = calcularAguaRecomendada(pesoActual, actividad);
-                aguaRecomendada = { litros: agua.litros, vasos: agua.vasos, formula: `${agua.factor} ml/kg` };
-            }
+    // Calcular agua recomendada
+    let aguaRecomendada = { litros: "—", vasos: "—", formula: "—" };
+    if (pesoActual) {
+        const actividad = parseFloat(document.getElementById('actividad').value);
+        const agua = calcularAguaRecomendada(pesoActual, actividad);
+        aguaRecomendada = { litros: agua.litros, vasos: agua.vasos, formula: `${agua.factor} ml/kg` };
+    }
 
-            let comidasConMacros = calcularMacrosPorComidaConExclusiones();
-            const caloriasTotales = macrosDiarios.calorias;
-            const carbsTotal = macrosDiarios.carbs;
-            const protTotal = macrosDiarios.proteinas;
-            const grasTotal = macrosDiarios.grasas;
+    // Obtener comidas con macros redistribuidos (aplicando exclusiones)
+    let comidasConMacros = calcularMacrosPorComidaConExclusiones();
+    
+    // Totales diarios
+    const caloriasTotales = macrosDiarios.calorias;
+    const carbsTotal = macrosDiarios.carbs;
+    const protTotal = macrosDiarios.proteinas;
+    const grasTotal = macrosDiarios.grasas;
 
-            let html = `
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Plan Nutricional - BeeGreen</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 40px; line-height: 1.4; color: #333; }
-                        h1 { color: #2A7B9B; border-bottom: 2px solid #2A7B9B; padding-bottom: 5px; }
-                        h2 { color: #337522; margin-top: 25px; font-size: 1.4em; border-left: 4px solid #2A7B9B; padding-left: 12px; }
-                        .header { text-align: center; margin-bottom: 30px; }
-                        .datos-paciente { background: #f5f5f5; padding: 12px 20px; border-radius: 10px; margin: 20px 0; }
-                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-                        th { background: #2A7B9B; color: white; }
-                        .total-row { background: #e8f4f8; font-weight: bold; }
-                        footer { margin-top: 40px; text-align: center; font-size: 0.8em; color: #888; border-top: 1px solid #eee; padding-top: 15px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>🐝 BeeGreen CALC</h1>
-                        <div>Plan Nutricional Personalizado</div>
-                    </div>
-                    <div class="datos-paciente">
-                        <p><strong>📋 Nombre:</strong> ${nombrePaciente} | <strong>🎂 Edad:</strong> ${edad} años | <strong>⚥ Sexo:</strong> ${sexo}</p>
-                        <p><strong>📅 Fecha:</strong> ${fecha} | <strong>🎯 Objetivo:</strong> ${objetivoTexto} | <strong>🍽️ Comidas:</strong> ${numeroComidas}</p>
-                    </div>
-                    <h2>📊 Macronutrientes Diarios</h2>
-                    <p><strong>Total:</strong> ${Math.round(caloriasTotales)} kcal | 🥔 Carbs: ${carbsTotal.toFixed(1)}g | 🍗 Prot: ${protTotal.toFixed(1)}g | 🧈 Grasas: ${grasTotal.toFixed(1)}g</p>
-                    <h2>💧 Hidratación</h2>
-                    <p>${aguaRecomendada.litros} litros/día (≈ ${aguaRecomendada.vasos} vasos)</p>
-                    <h2>🍽️ Distribución por Comidas</h2>
-                    <table>
-                        <tr><th>Comida</th><th>%</th><th>kcal</th><th>HC (g)</th><th>PRO (g)</th><th>GRA (g)</th></tr>
-            `;
+    // Construir HTML para Word
+    let html = `
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Plan Nutricional - BeeGreen</title>
+            <style>
+                body {
+                    font-family: 'Segoe UI', Arial, sans-serif;
+                    margin: 40px;
+                    line-height: 1.4;
+                    color: #333;
+                }
+                h1 {
+                    color: #2A7B9B;
+                    border-bottom: 2px solid #2A7B9B;
+                    padding-bottom: 5px;
+                }
+                h2 {
+                    color: #337522;
+                    margin-top: 25px;
+                    font-size: 1.4em;
+                    border-left: 4px solid #2A7B9B;
+                    padding-left: 12px;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+                .header h1 {
+                    border-bottom: none;
+                    margin-bottom: 5px;
+                }
+                .subtitle {
+                    color: #666;
+                    font-style: italic;
+                }
+                .datos-paciente {
+                    background: #f5f5f5;
+                    padding: 12px 20px;
+                    border-radius: 10px;
+                    margin: 20px 0;
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+                }
+                .datos-paciente p {
+                    margin: 5px 0;
+                    width: 45%;
+                }
+                .resumen-macros {
+                    background: linear-gradient(135deg, #2A7B9B, #337522);
+                    color: black;
+                    padding: 15px;
+                    border-radius: 12px;
+                    margin: 20px 0;
+                    text-align: left;
+                }
+                .resumen-macros h3 {
+                    margin: 0 0 10px 0;
+                }
+                .macro-items {
+                    display: flex;
+                    justify-content: space-around;
+                    flex-wrap: wrap;
+                }
+                .macro-item {
+                    background: #e0f7fa;
+                    padding: 8px 15px;
+                    border-radius: 20px;
+                    margin: 5px;
+                }
+                .hidratacion {
+                    background: #e0f7fa;
+                    padding: 15px;
+                    border-radius: 12px;
+                    margin: 20px 0;
+                    border-left: 5px solid #00acc1;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 10px;
+                    text-align: center;
+                }
+                th {
+                    background: #2A7B9B;
+                    color: white;
+                }
+                .total-row {
+                    background: #e8f4f8;
+                    font-weight: bold;
+                }
+                .excluded {
+                    color: #999;
+                    font-style: italic;
+                }
+                .recomendaciones {
+                    background: #f9f9e0;
+                    padding: 15px;
+                    border-radius: 12px;
+                    margin: 20px 0;
+                }
+                .observaciones {
+                    margin-top: 30px;
+                    border-top: 1px dashed #ccc;
+                    padding-top: 15px;
+                }
+                footer {
+                    margin-top: 40px;
+                    text-align: center;
+                    font-size: 0.8em;
+                    color: #888;
+                    border-top: 1px solid #eee;
+                    padding-top: 15px;
+                }
+                .badge {
+                    background: #28a745;
+                    color: white;
+                    padding: 2px 8px;
+                    border-radius: 20px;
+                    font-size: 0.7rem;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>🐝 BeeGreen CALC</h1>
+                <div class="subtitle">Plan Nutricional Personalizado - Sistema Profesional para Nutricionistas</div>
+            </div>
 
-            comidasConMacros.forEach(comida => {
-                let ex = macroExclusions[comida.id] || { carbs: false, protein: false, fat: false };
-                html += `
-                    <tr>
-                        <td>${comida.nombre}</td>
-                        <td>${comida.porcentaje}%</td>
-                        <td>${Math.round(comida.kcal)}</td>
-                        <td>${ex.carbs ? '0' : comida.carbs.toFixed(1)}</td>
-                        <td>${ex.protein ? '0' : comida.protein.toFixed(1)}</td>
-                        <td>${ex.fat ? '0' : comida.fat.toFixed(1)}</td>
+            <div class="datos-paciente">
+                <p><strong>📋 Nombre:</strong> ${nombrePaciente}</p>
+                <p><strong>🎂 Edad:</strong> ${edad} años</p>
+                <p><strong>⚥ Sexo:</strong> ${sexo}</p>
+                <p><strong>📅 Fecha del plan:</strong> ${fecha}</p>
+                <p><strong>🎯 Objetivo nutricional:</strong> ${objetivoTexto}</p>
+                <p><strong>🍽️ Número de comidas diarias:</strong> ${numeroComidas}</p>
+            </div>
+
+            <h2>📊 RESUMEN DE MACRONUTRIENTES DIARIOS</h2>
+            <div class="resumen-macros">
+                <h3>Total Calórico: ${Math.round(caloriasTotales)} kcal/día</h3>
+                <div class="macro-items">
+                    <div class="macro-item">🥔 Carbohidratos: ${carbsTotal.toFixed(1)} g (${macrosDiarios.pCarbs}%)</div>
+                    <div class="macro-item">🍗 Proteínas: ${protTotal.toFixed(1)} g (${macrosDiarios.pProt}%)</div>
+                    <div class="macro-item">🧈 Grasas: ${grasTotal.toFixed(1)} g (${macrosDiarios.pGras}%)</div>
+                </div>
+            </div>
+
+            <h2>💧 HIDRATACIÓN RECOMENDADA</h2>
+            <div class="hidratacion">
+                <p><strong>🚰 Agua diaria:</strong> ${aguaRecomendada.litros} litros (≈ ${aguaRecomendada.vasos} vasos de 250 ml)</p>
+                <p><strong>📐 Fórmula utilizada:</strong> ${aguaRecomendada.formula} según nivel de actividad.</p>
+                <p><strong>💡 Tip:</strong> Distribuir el consumo a lo largo del día, aumentar con ejercicio o clima caluroso.</p>
+            </div>
+
+            <h2>🍽️ DISTRIBUCIÓN DE COMIDAS</h2>
+            <table>
+                <thead>
+                    <tr><th>Comida</th><th>% del total</th><th>🔥 kcal</th><th>🥔 HC (g)</th><th>🍗 PRO (g)</th><th>🧈 GRA (g)</th></tr>
+                </thead>
+                <tbody>
+    `;
+
+    comidasConMacros.forEach(comida => {
+        let ex = macroExclusions[comida.id] || { carbs: false, protein: false, fat: false };
+        html += `
+            <tr>
+                <td>${comida.nombre}</td>
+                <td>${comida.porcentaje}%</td>
+                <td>${Math.round(comida.kcal)}</td>
+                <td class="${ex.carbs ? 'excluded' : ''}">${ex.carbs ? '0 (redist.)' : comida.carbs.toFixed(1)}</td>
+                <td class="${ex.protein ? 'excluded' : ''}">${ex.protein ? '0 (redist.)' : comida.protein.toFixed(1)}</td>
+                <td class="${ex.fat ? 'excluded' : ''}">${ex.fat ? '0 (redist.)' : comida.fat.toFixed(1)}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+                    <tr class="total-row">
+                        <td colspan="2"><strong>TOTAL DIARIO</strong></td>
+                        <td><strong>${Math.round(caloriasTotales)}</strong></td>
+                        <td><strong>${carbsTotal.toFixed(1)}</strong></td>
+                        <td><strong>${protTotal.toFixed(1)}</strong></td>
+                        <td><strong>${grasTotal.toFixed(1)}</strong></td>
                     </tr>
-                `;
-            });
+                </tbody>
+            </table>
 
-            html += `
-                        <tr class="total-row">
-                            <td colspan="2"><strong>TOTAL</strong></td>
-                            <td><strong>${Math.round(caloriasTotales)}</strong></td>
-                            <td><strong>${carbsTotal.toFixed(1)}</strong></td>
-                            <td><strong>${protTotal.toFixed(1)}</strong></td>
-                            <td><strong>${grasTotal.toFixed(1)}</strong></td>
-                        </tr>
-                    </table>
-                    <footer>Plan generado por BeeGreen CALC - Sistema Profesional para Nutricionistas<br>Lic. Pedro Rosales</footer>
-                </body>
-                </html>
-            `;
+            <div class="recomendaciones">
+                <h3>📝 RECOMENDACIONES GENERALES</h3>
+                <ul>
+                    <li>Consumir alimentos variados y de temporada, priorizando vegetales frescos.</li>
+                    <li>Preferir carbohidratos complejos (granos enteros, tubérculos, legumbres) sobre azúcares simples.</li>
+                    <li>Incluir proteínas magras (pollo, pescado, legumbres, huevo) en cada comida principal.</li>
+                    <li>Utilizar grasas saludables: aceite de oliva, aguacate, frutos secos, semillas.</li>
+                    <li>Realizar actividad física regular según tolerancia y objetivos.</li>
+                    <li>Beber agua de forma constante, incluso sin sed.</li>
+                </ul>
+            </div>
 
-            let blob = new Blob([html], { type: 'application/msword' });
-            let enlace = document.createElement('a');
-            enlace.href = URL.createObjectURL(blob);
-            enlace.download = `Plan_Nutricional_${nombrePaciente.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.doc`;
-            enlace.click();
-            URL.revokeObjectURL(enlace.href);
-        }
+            <div class="observaciones">
+                <h3>👩‍⚕️ OBSERVACIONES DEL NUTRICIONISTA</h3>
+                <p style="min-height: 80px; border-bottom: 1px solid #ccc; padding: 10px;">&nbsp;</p>
+            </div>
+
+            <footer>
+                Plan generado por BeeGreen CALC - Sistema Profesional para Nutricionistas<br>
+                Lic. Pedro Rosales - rosales2710@gmail.com - Tel: +58 412-7483023
+            </footer>
+        </body>
+        </html>
+    `;
+
+    let blob = new Blob([html], { type: 'application/msword' });
+    let enlace = document.createElement('a');
+    enlace.href = URL.createObjectURL(blob);
+    enlace.download = `Plan_Nutricional_${nombrePaciente.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.doc`;
+    enlace.click();
+    URL.revokeObjectURL(enlace.href);
+}
 
         // --------------------------------------------------------------
         // 9. FUNCIONES DE BÚSQUEDA Y FILTRADO DE ALIMENTOS
@@ -2276,11 +2836,7 @@
             document.getElementById('search-food').value = alimento.nombre;
             document.querySelectorAll('.food-item').forEach(item => item.classList.remove('selected'));
             if (event && event.target) {
-                let target = event.target;
-                while (target && !target.classList.contains('food-item')) {
-                    target = target.parentElement;
-                }
-                if (target) target.classList.add('selected');
+                event.target.classList.add('selected');
             }
         }
 
@@ -2408,101 +2964,105 @@
         // 11. SEGUIMIENTO DE OBJETIVOS
         // --------------------------------------------------------------
         function actualizarObjetivosPorCategoria() {
-            if (macrosDiarios.calorias === 0 || macrosDiarios.calorias === undefined) {
-                document.getElementById('goal-tracker').style.display = 'none';
-                return;
-            }
-            
-            let categoria = document.getElementById('menu-categoria').value;
-            let comidasConMacros = calcularMacrosPorComidaConExclusiones();
-            
-            let comidaObj = comidasConMacros.find(c => {
-                if (categoria === 'Desayuno') return c.id === 'desayuno';
-                if (categoria === 'Merienda AM') return c.id === 'merienda-am';
-                if (categoria === 'Almuerzo') return c.id === 'almuerzo';
-                if (categoria === 'Merienda PM') return c.id === 'merienda-pm';
-                if (categoria === 'Cena') return c.id === 'cena';
-                if (categoria === 'Merienda Post Cena') return c.id === 'merienda-post-cena';
-                return false;
-            });
-            
-            if (!comidaObj) {
-                document.getElementById('goal-tracker').style.display = 'none';
-                return;
-            }
-            
-            let objetivoCal = comidaObj.kcal;
-            let objetivoProt = comidaObj.protein;
-            let objetivoGras = comidaObj.fat;
-            let objetivoCarb = comidaObj.carbs;
-            
-            let totalCal = menuActual.reduce((sum, i) => sum + i.calorias, 0);
-            let totalProt = menuActual.reduce((sum, i) => sum + parseFloat(i.proteinas), 0);
-            let totalGras = menuActual.reduce((sum, i) => sum + parseFloat(i.grasas), 0);
-            let totalCarb = menuActual.reduce((sum, i) => sum + parseFloat(i.carbohidratos), 0);
-            
-            let faltaCal = objetivoCal - totalCal;
-            let faltaProt = objetivoProt - totalProt;
-            let faltaGras = objetivoGras - totalGras;
-            let faltaCarb = objetivoCarb - totalCarb;
-            
-            let porcCal = Math.min(100, Math.max(0, (totalCal / objetivoCal) * 100));
-            let porcProt = Math.min(100, Math.max(0, (totalProt / objetivoProt) * 100));
-            let porcGras = Math.min(100, Math.max(0, (totalGras / objetivoGras) * 100));
-            let porcCarb = Math.min(100, Math.max(0, (totalCarb / objetivoCarb) * 100));
-            
-            document.getElementById('goal-tracker').style.display = 'block';
-            document.getElementById('goal-content').innerHTML = `
-                <div class="goal-progress">
-                    <div class="label">
-                        <span>🔥 Calorías</span>
-                        <span>${Math.round(totalCal)} / ${Math.round(objetivoCal)} kcal</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill ${totalCal > objetivoCal ? 'over' : ''}" style="width:${porcCal}%"></div>
-                    </div>
-                    <div class="goal-value ${faltaCal >= 0 ? '' : 'warning'}">
-                        ${faltaCal > 0 ? `📈 Faltan ${Math.round(faltaCal)} kcal` : (faltaCal < 0 ? `⚠️ Exceso de ${Math.abs(Math.round(faltaCal))} kcal` : '✅ Meta alcanzada')}
-                    </div>
-                </div>
-                <div class="goal-progress">
-                    <div class="label">
-                        <span>🍗 Proteínas</span>
-                        <span>${totalProt.toFixed(1)} / ${objetivoProt.toFixed(1)} g</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill ${totalProt > objetivoProt ? 'over' : ''}" style="width:${porcProt}%"></div>
-                    </div>
-                    <div class="goal-value ${faltaProt >= 0 ? '' : 'warning'}">
-                        ${faltaProt > 0 ? `📈 Faltan ${faltaProt.toFixed(1)} g` : (faltaProt < 0 ? `⚠️ Exceso de ${Math.abs(faltaProt).toFixed(1)} g` : '✅ Meta alcanzada')}
-                    </div>
-                </div>
-                <div class="goal-progress">
-                    <div class="label">
-                        <span>🧈 Grasas</span>
-                        <span>${totalGras.toFixed(1)} / ${objetivoGras.toFixed(1)} g</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill ${totalGras > objetivoGras ? 'over' : ''}" style="width:${porcGras}%"></div>
-                    </div>
-                    <div class="goal-value ${faltaGras >= 0 ? '' : 'warning'}">
-                        ${faltaGras > 0 ? `📈 Faltan ${faltaGras.toFixed(1)} g` : (faltaGras < 0 ? `⚠️ Exceso de ${Math.abs(faltaGras).toFixed(1)} g` : '✅ Meta alcanzada')}
-                    </div>
-                </div>
-                <div class="goal-progress">
-                    <div class="label">
-                        <span>🥔 Carbohidratos</span>
-                        <span>${totalCarb.toFixed(1)} / ${objetivoCarb.toFixed(1)} g</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill ${totalCarb > objetivoCarb ? 'over' : ''}" style="width:${porcCarb}%"></div>
-                    </div>
-                    <div class="goal-value ${faltaCarb >= 0 ? '' : 'warning'}">
-                        ${faltaCarb > 0 ? `📈 Faltan ${faltaCarb.toFixed(1)} g` : (faltaCarb < 0 ? `⚠️ Exceso de ${Math.abs(faltaCarb).toFixed(1)} g` : '✅ Meta alcanzada')}
-                    </div>
-                </div>
-            `;
-        }
+    if (macrosDiarios.calorias === 0 || macrosDiarios.calorias === undefined) {
+        document.getElementById('goal-tracker').style.display = 'none';
+        return;
+    }
+    
+    let categoria = document.getElementById('menu-categoria').value;
+    
+    // Obtener los valores redistribuidos por comida (aplicando exclusiones)
+    let comidasConMacros = calcularMacrosPorComidaConExclusiones();
+    
+    // Buscar la comida que coincide con la categoría seleccionada
+    let comidaObj = comidasConMacros.find(c => {
+        if (categoria === 'Desayuno') return c.id === 'desayuno';
+        if (categoria === 'Merienda AM') return c.id === 'merienda-am';
+        if (categoria === 'Almuerzo') return c.id === 'almuerzo';
+        if (categoria === 'Merienda PM') return c.id === 'merienda-pm';
+        if (categoria === 'Cena') return c.id === 'cena';
+        if (categoria === 'Merienda Post Cena') return c.id === 'merienda-post-cena';
+        return false;
+    });
+    
+    if (!comidaObj) {
+        document.getElementById('goal-tracker').style.display = 'none';
+        return;
+    }
+    
+    // Usar los valores ya redistribuidos (kcal, protein, carbs, fat)
+    let objetivoCal = comidaObj.kcal;
+    let objetivoProt = comidaObj.protein;
+    let objetivoGras = comidaObj.fat;
+    let objetivoCarb = comidaObj.carbs;
+    
+    let totalCal = menuActual.reduce((sum, i) => sum + i.calorias, 0);
+    let totalProt = menuActual.reduce((sum, i) => sum + parseFloat(i.proteinas), 0);
+    let totalGras = menuActual.reduce((sum, i) => sum + parseFloat(i.grasas), 0);
+    let totalCarb = menuActual.reduce((sum, i) => sum + parseFloat(i.carbohidratos), 0);
+    
+    let faltaCal = objetivoCal - totalCal;
+    let faltaProt = objetivoProt - totalProt;
+    let faltaGras = objetivoGras - totalGras;
+    let faltaCarb = objetivoCarb - totalCarb;
+    
+    let porcCal = Math.min(100, Math.max(0, (totalCal / objetivoCal) * 100));
+    let porcProt = Math.min(100, Math.max(0, (totalProt / objetivoProt) * 100));
+    let porcGras = Math.min(100, Math.max(0, (totalGras / objetivoGras) * 100));
+    let porcCarb = Math.min(100, Math.max(0, (totalCarb / objetivoCarb) * 100));
+    
+    document.getElementById('goal-tracker').style.display = 'block';
+    document.getElementById('goal-content').innerHTML = `
+        <div class="goal-progress">
+            <div class="label">
+                <span>🔥 Calorías</span>
+                <span>${Math.round(totalCal)} / ${Math.round(objetivoCal)} kcal</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill ${totalCal > objetivoCal ? 'over' : ''}" style="width:${porcCal}%"></div>
+            </div>
+            <div class="goal-value ${faltaCal >= 0 ? '' : 'warning'}">
+                ${faltaCal > 0 ? `📈 Faltan ${Math.round(faltaCal)} kcal` : (faltaCal < 0 ? `⚠️ Exceso de ${Math.abs(Math.round(faltaCal))} kcal` : '✅ Meta alcanzada')}
+            </div>
+        </div>
+        <div class="goal-progress">
+            <div class="label">
+                <span>🍗 Proteínas</span>
+                <span>${totalProt.toFixed(1)} / ${objetivoProt.toFixed(1)} g</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill ${totalProt > objetivoProt ? 'over' : ''}" style="width:${porcProt}%"></div>
+            </div>
+            <div class="goal-value ${faltaProt >= 0 ? '' : 'warning'}">
+                ${faltaProt > 0 ? `📈 Faltan ${faltaProt.toFixed(1)} g` : (faltaProt < 0 ? `⚠️ Exceso de ${Math.abs(faltaProt).toFixed(1)} g` : '✅ Meta alcanzada')}
+            </div>
+        </div>
+        <div class="goal-progress">
+            <div class="label">
+                <span>🧈 Grasas</span>
+                <span>${totalGras.toFixed(1)} / ${objetivoGras.toFixed(1)} g</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill ${totalGras > objetivoGras ? 'over' : ''}" style="width:${porcGras}%"></div>
+            </div>
+            <div class="goal-value ${faltaGras >= 0 ? '' : 'warning'}">
+                ${faltaGras > 0 ? `📈 Faltan ${faltaGras.toFixed(1)} g` : (faltaGras < 0 ? `⚠️ Exceso de ${Math.abs(faltaGras).toFixed(1)} g` : '✅ Meta alcanzada')}
+            </div>
+        </div>
+        <div class="goal-progress">
+            <div class="label">
+                <span>🥔 Carbohidratos</span>
+                <span>${totalCarb.toFixed(1)} / ${objetivoCarb.toFixed(1)} g</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill ${totalCarb > objetivoCarb ? 'over' : ''}" style="width:${porcCarb}%"></div>
+            </div>
+            <div class="goal-value ${faltaCarb >= 0 ? '' : 'warning'}">
+                ${faltaCarb > 0 ? `📈 Faltan ${faltaCarb.toFixed(1)} g` : (faltaCarb < 0 ? `⚠️ Exceso de ${Math.abs(faltaCarb).toFixed(1)} g` : '✅ Meta alcanzada')}
+            </div>
+        </div>
+    `;
+}
 
         // --------------------------------------------------------------
         // 12. EXPORTACIÓN Y GUARDADO DE MENÚS
@@ -2793,23 +3353,12 @@
                             }
                         }));
                         actualizarMenu();
-                        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                        document.querySelectorAll('.tab-btn')[2].classList.add('active');
-                        showTabDirect('menu');
+                        showTab('menu');
                     };
                 }
                 
                 contenedor.appendChild(tarjeta);
             });
-        }
-        
-        function showTabDirect(tab) {
-            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-            document.getElementById(`${tab}-tab`).style.display = 'block';
-            if (tab === 'menu') {
-                cargarListaAlimentos();
-                actualizarObjetivosPorCategoria();
-            }
         }
         
         function eliminarMenuGuardado(id) {
@@ -2894,6 +3443,10 @@
         // --------------------------------------------------------------
         // 15. INICIALIZACIÓN
         // --------------------------------------------------------------
+        cargarMenusGuardados();
+        cargarListaAlimentos();
+        generarInterfazComidas();
+        
         window.onclick = function(e) {
             if (e.target === document.getElementById('backupModal')) {
                 cerrarModalBackup();
