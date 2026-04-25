@@ -722,7 +722,47 @@
         .btn-success {
             background: #28a745;
         }
+/* ========== FOOTER ========== */
+        footer {
+            background-color: #1a4d2a;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px;
+            border-radius: 20px;
+        }
 
+        .footer-container {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+            margin: 10px;
+        }
+
+        .footer-section h3 {
+            border-bottom: 2px solid #555;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .footer-bottom {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        .backup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
         
 
         /* ========== RESPONSIVE ========== */
@@ -1105,22 +1145,7 @@
             </div>
             <input type="file" id="backupFileInput" style="display: none;" accept=".json" onchange="procesarImportacionBackup(event)">
         </div>
-        <!-- ========== FOOTER ========== -->
-    <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>Elaborado por: Lic. Pedro Rosales</h3>
-                <p>Email: rosales2710@gmail.com</p>
-                <p>Tel: +58 412-7483023</p>
-            </div>
-            <div class="footer-section">
-                <h3>🔄 Respaldo</h3>
-                <button onclick="abrirModalBackup()" style="background: #ffc107; color: #333;">💾 Respaldo de Datos</button>
-            </div>
-        </div>
-        <div class="footer-bottom">&copy; 2026 BeeGreen. Todos los derechos reservados.</div>
-    </footer>
-</div>
+        
 
     
 
@@ -3425,46 +3450,21 @@ function toggleMacroExclusion(mealId, macro) {
             }
         };
     </script>
-    /* ========== FOOTER ========== */
-        footer {
-            background-color: #1a4d2a;
-            color: #fff;
-            padding: 20px 0;
-            text-align: center;
-            margin-top: 30px;
-            border-radius: 20px;
-        }
-
-        .footer-container {
-            max-width: 1000px;
-            margin: auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-
-        .footer-section {
-            flex: 1 1 200px;
-            margin: 10px;
-        }
-
-        .footer-section h3 {
-            border-bottom: 2px solid #555;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-        }
-
-        .footer-bottom {
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #ccc;
-        }
-
-        .backup-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 15px;
-        }
+   <!-- ========== FOOTER ========== -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Elaborado por: Lic. Pedro Rosales</h3>
+                <p>Email: rosales2710@gmail.com</p>
+                <p>Tel: +58 412-7483023</p>
+            </div>
+            <div class="footer-section">
+                <h3>🔄 Respaldo</h3>
+                <button onclick="abrirModalBackup()" style="background: #ffc107; color: #333;">💾 Respaldo de Datos</button>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 BeeGreen. Todos los derechos reservados.</div>
+    </footer>
+</div> 
 </body>
 </html>
