@@ -5,6 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>BeeGreen CALC - Sistema Profesional para Nutricionistas</title>
+    function cargarSesion(user) {
+    authContainer.style.display = 'none';
+    appContainer.style.display = 'block';
+    // Agregar barra de usuario en el header
+    const header = document.querySelector('.header');
+    if (header && !document.getElementById('user-welcome')) {
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.id = 'user-welcome';
+        welcomeDiv.style.display = 'flex';
+        welcomeDiv.style.alignItems = 'center';
+        welcomeDiv.style.gap = '15px';
+        welcomeDiv.innerHTML = `
+            <div style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:50px; font-size:0.9rem;">${user.email}</div>
+            <button id="logout-button" style="background:rgba(0,0,0,0.3); border:none; padding:8px 16px; border-radius:30px; color:white; cursor:pointer;">🚪 Cerrar Sesión</button>
+        `;
+        header.appendChild(welcomeDiv);
+        document.getElementById('logout-button').addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            location.reload(); // Recargar para mostrar login
+        });
+    }
+}
     <style>
         /* ========== RESET Y ESTILOS GLOBALES ========== */
         * {
@@ -1232,28 +1254,7 @@ document.getElementById('btn-register').addEventListener('click', async () => {
     }
 });
 
-function cargarSesion(user) {
-    authContainer.style.display = 'none';
-    appContainer.style.display = 'block';
-    // Agregar barra de usuario en el header
-    const header = document.querySelector('.header');
-    if (header && !document.getElementById('user-welcome')) {
-        const welcomeDiv = document.createElement('div');
-        welcomeDiv.id = 'user-welcome';
-        welcomeDiv.style.display = 'flex';
-        welcomeDiv.style.alignItems = 'center';
-        welcomeDiv.style.gap = '15px';
-        welcomeDiv.innerHTML = `
-            <div style="background:rgba(255,255,255,0.2); padding:8px 16px; border-radius:50px; font-size:0.9rem;">${user.email}</div>
-            <button id="logout-button" style="background:rgba(0,0,0,0.3); border:none; padding:8px 16px; border-radius:30px; color:white; cursor:pointer;">🚪 Cerrar Sesión</button>
-        `;
-        header.appendChild(welcomeDiv);
-        document.getElementById('logout-button').addEventListener('click', async () => {
-            await supabaseClient.auth.signOut();
-            location.reload(); // Recargar para mostrar login
-        });
-    }
-}
+
 
 async function verificarSesionActual() {
     const { data: { session } } = await supabaseClient.auth.getSession();
@@ -3465,6 +3466,6 @@ function toggleMacroExclusion(mealId, macro) {
                 <button onclick="abrirModalBackup()" style="background: #ffc107; color: #333;">💾 Respaldo de Datos</button>
             </div>
         </div>
-        <div class="footer-bottom">; 2026 BeeGreen. Todos los derechos reservados.</div>
+        <div class="footer-bottom">2026 BeeGreen. Todos los derechos reservados.</div>
     </footer>
 </html>
