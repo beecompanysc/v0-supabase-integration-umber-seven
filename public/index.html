@@ -25,11 +25,10 @@
         }
 
         .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-    padding-top: 70px; /* espacio para la barra fija */
-
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
 
         /* ========== HEADER ========== */
         .header {
@@ -803,44 +802,6 @@
 #logout-button:hover {
   background: rgba(0,0,0,0.5);
 }
-        
-/* Barra de usuario fija en la esquina superior derecha */
-#user-welcome {
-    position: fixed;
-    top: 15px;
-    right: 20px;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    border-radius: 40px;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.9rem;
-    color: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-#user-welcome div {
-    background: rgba(255,255,255,0.2);
-    padding: 4px 12px;
-    border-radius: 30px;
-}
-
-#logout-button {
-    background: rgba(0,0,0,0.5);
-    border: none;
-    padding: 6px 14px;
-    border-radius: 30px;
-    color: white;
-    cursor: pointer;
-    transition: 0.2s;
-}
-#logout-button:hover {
-    background: #dc3545;
-}
-        
     </style>
 </head>
 <body>
@@ -3489,7 +3450,7 @@ function toggleMacroExclusion(mealId, macro) {
             }
         };
     </script>
-
+</div> 
 </body>
     <!-- ========== FOOTER ========== -->
     <footer>
