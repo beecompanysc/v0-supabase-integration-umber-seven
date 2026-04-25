@@ -1255,7 +1255,6 @@ function cargarSesion(user) {
     }
 }
 
-
 async function verificarSesionActual() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session?.user) {
