@@ -859,7 +859,21 @@ function cargarSesion(user) {
 
 #logout-button:hover {
     background: #dc3545;
-}        
+} 
+
+/* Estilos específicos para el módulo de embarazo */
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+.form-grid label { font-weight: 500; display: flex; flex-direction: column; gap: 5px; }
+.form-grid input { padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; }
+.result-box { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; margin-top: 15px; border-radius: 8px; }
+.result-box p { margin: 5px 0; }
+.ref-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.ref-table th, .ref-table td { padding: 10px; border: 1px solid #e5e7eb; text-align: center; }
+.ref-table th { background: #f8fafc; font-weight: 600; }
+.ref-table tr:nth-child(even) { background: #f9fafb; }
+.nota-medica { display: block; margin-top: 8px; color: #6b7280; font-style: italic; }
+.table-responsive { overflow-x: auto; }
+     
     </style>
 </head>
 <body>
@@ -917,6 +931,7 @@ function cargarSesion(user) {
             <button class="tab-btn" onclick="showTab('macros')">⚡ Macros Diarios</button>
             <button class="tab-btn" onclick="showTab('menu')">📋 Crear Menú</button>
             <button class="tab-btn" onclick="showTab('saved')">💾 Menús Guardados</button>
+            <button class="tab-btn" onclick="showTab('embarazo')">🤰 Embarazo</button>
         </div>
 
         <!-- ========== TAB IMC ========== -->
@@ -1190,6 +1205,39 @@ function cargarSesion(user) {
         </div>
     </div>
 
+<!-- ========== TAB EMBARAZO ========== -->
+<section id="embarazo-tab" class="tab-content" style="display: none;">
+  <h2>🤰 Seguimiento de Peso en Embarazo</h2>
+  <div class="card">
+    <div class="form-grid">
+      <label>Peso Pre-Embarazo (kg) <input type="number" id="emb-peso" step="0.1" placeholder="Ej: 58.5"></label>
+      <label>Altura (cm) <input type="number" id="emb-altura" placeholder="Ej: 160"></label>
+      <label>Semanas de Gestación (1-42) <input type="number" id="emb-semanas" min="1" max="42" placeholder="Ej: 24"></label>
+    </div>
+    <button class="btn-primary" onclick="calcularEmbarazo()">📊 Calcular Rango Esperado</button>
+    <div id="resultado-emb" class="result-box" style="display:none;"></div>
+  </div>
+
+  <div class="card">
+    <h3>📈 Tabla Referencial de Aumento de Peso Progresivo (Guías IOM)</h3>
+    <div class="table-responsive">
+      <table class="ref-table">
+        <thead>
+          <tr><th>Etapa</th><th>Semanas</th><th>Aumento Acumulado (kg)</th><th>Aumento Semanal Promedio</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1er Trimestre</td><td>1 - 12</td><td>0.5 - 2.0</td><td>Variable</td></tr>
+          <tr><td>2do Trimestre</td><td>13 - 24</td><td>3.5 - 6.0</td><td>0.42 - 0.58 kg</td></tr>
+          <tr><td>3er Trimestre</td><td>25 - 36</td><td>7.0 - 11.0</td><td>0.42 - 0.58 kg</td></tr>
+          <tr><td>Término</td><td>37 - 40</td><td>11.5 - 16.0*</td><td>0.42 - 0.58 kg</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <small class="nota-medica">*Rango referencial para <strong>IMC normal (18.5-24.9)</strong>. Bajopeso: 12.5-18 kg | Sobrepeso: 7-11.5 kg | Obesidad: 5-9 kg. Consulte siempre a su obstetra.</small>
+  </div>
+</section>
+
+    
     <!-- ========== MODAL DE RESPALDO ========== -->
     <div id="backupModal" class="modal">
         <div class="modal-content">
@@ -3506,6 +3554,61 @@ function toggleMacroExclusion(mealId, macro) {
                 cerrarModalBackup();
             }
         };
+
+function calcularEmbarazo() {
+  const peso = parseFloat(document.getElementById('emb-peso').value);
+  const alturaCm = parseFloat(document.getElementById('emb-altura').value);
+  const semanas = parseInt(document.getElementById('emb-semanas').value);
+
+  if (!peso || !alturaCm || !semanas || semanas < 1 || semanas > 42) {
+    alert('⚠️ Por favor, complete todos los campos con valores válidos.');
+    return;
+  }
+
+  const alturaM = alturaCm / 100;
+  const imc = peso / (alturaM * alturaM);
+  let categoria, minTotal, maxTotal, minSemanal, maxSemanal;
+
+  // Clasificación IOM 2009
+  if (imc < 18.5) {
+    categoria = 'Bajo peso'; minTotal = 12.5; maxTotal = 18; minSemanal = 0.51; maxSemanal = 0.62;
+  } else if (imc < 25) {
+    categoria = 'Peso normal'; minTotal = 11.5; maxTotal = 16; minSemanal = 0.42; maxSemanal = 0.58;
+  } else if (imc < 30) {
+    categoria = 'Sobrepeso'; minTotal = 7; maxTotal = 11.5; minSemanal = 0.28; maxSemanal = 0.40;
+  } else {
+    categoria = 'Obesidad'; minTotal = 5; maxTotal = 9; minSemanal = 0.22; maxSemanal = 0.30;
+  }
+
+  // Cálculo progresivo (1er tri fijo ~1.5-2kg, luego semanal)
+  let minAcum, maxAcum;
+  if (semanas <= 12) {
+    minAcum = Math.min(1.5, minTotal * (semanas / 40));
+    maxAcum = Math.min(2.0, maxTotal * (semanas / 40));
+  } else {
+    const semPost12 = semanas - 12;
+    minAcum = 1.5 + (semPost12 * minSemanal);
+    maxAcum = 2.0 + (semPost12 * maxSemanal);
+  }
+
+  // Limitar a rangos totales
+  minAcum = Math.min(minAcum, minTotal);
+  maxAcum = Math.min(maxAcum, maxTotal);
+
+  const pesoMin = peso + minAcum;
+  const pesoMax = peso + maxAcum;
+
+  const resDiv = document.getElementById('resultado-emb');
+  resDiv.style.display = 'block';
+  resDiv.innerHTML = `
+    <p><strong>IMC Pre-Embarazo:</strong> ${imc.toFixed(1)} kg/m² → ${categoria}</p>
+    <p><strong>Aumento Total Recomendado:</strong> ${minTotal} - ${maxTotal} kg</p>
+    <p><strong>Aumento Acumulado Esperado (Sem ${semanas}):</strong> ${minAcum.toFixed(1)} - ${maxAcum.toFixed(1)} kg</p>
+    <p><strong>Rango de Peso Esperado:</strong> ${pesoMin.toFixed(1)} - ${pesoMax.toFixed(1)} kg</p>
+    <small>📌 Basado en guías del Institute of Medicine (2009). Resultados referenciales.</small>
+  `;
+}
+        
     </script>
 </div> 
 </body>
