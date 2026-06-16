@@ -20,7 +20,7 @@ function cargarSesion(user) {
     // Si ya existe el elemento, no lo creamos de nuevo
     if (document.getElementById('user-welcome')) return;
     
-    const welcomeDiv = document.createElement('div');
+    const cc = document.createElement('div');
     welcomeDiv.id = 'user-welcome';
     welcomeDiv.innerHTML = `
         <div class="user-email">${user.email}</div>
@@ -825,7 +825,7 @@ function cargarSesion(user) {
 
 /* Barra flotante de usuario */
 #user-welcome {
-    position: absolute;
+    position: flex;
     top: 15px;
     right: 20px;
     z-index: 1000;
